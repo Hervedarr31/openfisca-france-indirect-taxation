@@ -12,7 +12,7 @@ def test_inflators_energy():
     data_year = 2011
     inflation_kwargs = dict(inflator_by_variable = inflators_by_year[year])
 
-    simulated_variables = ['depenses_carburants', 'depenses_combustibles_liquides', 'depenses_combustibles_solides',
+    simulated_variables = ['poste_carburants', 'depenses_combustibles_liquides', 'depenses_combustibles_solides',
         'depenses_electricite', 'depenses_tot', 'loyer_impute', 'rev_disp_loyerimput', 'rev_disponible']
 
     # TODO This variable is bugging 'depenses_gaz'
