@@ -13,21 +13,19 @@ log = logging.getLogger(__name__)
 class poste_carburants(YearlyVariable):
     value_type = float
     entity = Menage
-    label = "Consommation de carburants"
+    label = "Poste de onsommation de carburants"
 
     def formula(menage, period):
         return menage('poste_07_2_2_1_1', period)
 
 
-class depenses_combustibles_liquides(YearlyVariable):
+class poste_combustibles_liquides(YearlyVariable):
     value_type = float
     entity = Menage
     label = "Dépenses en combustibles liquides"
 
     def formula(menage, period):
-        depenses_combustibles_liquides = menage('poste_04_5_3_1_1', period)
-
-        return depenses_combustibles_liquides
+        return menage('poste_04_5_3_1_1', period)
 
 
 class depenses_combustibles_solides(YearlyVariable):
@@ -157,7 +155,6 @@ class depenses_electricite(YearlyVariable):
         depenses_electricite_seule = menage('depenses_electricite_seule', period)
         depenses_electricite_factures_jointes = menage('depenses_electricite_factures_jointes', period)
         depenses_electricite = depenses_electricite_seule + depenses_electricite_factures_jointes
-
         return depenses_electricite
 
 
@@ -168,17 +165,19 @@ class depenses_electricite_factures_jointes(YearlyVariable):
 
     def formula(menage, period):
         depenses_factures_jointes = menage('poste_04_5_1_1_1_a', period)
-
         depenses_electricite_seule = menage('depenses_electricite_seule', period)
-        depenses_gaz_seul = menage('depenses_gaz_seul', period)
-        depenses_gaz_elec = (depenses_electricite_seule * depenses_gaz_seul) > 0
-
-        moyenne_elec = numpy.mean(depenses_electricite_seule * depenses_gaz_elec)
-        moyenne_gaz = numpy.mean(depenses_gaz_seul * depenses_gaz_elec)
-        part_elec = moyenne_elec / (moyenne_elec + moyenne_gaz)
-
-        depenses_electricite_factures_jointes = depenses_factures_jointes * part_elec
-
+        poste_gaz_seul = menage('poste_gaz_seul', period)
+        consomme_gaz_et_electricte_separement = (
+            (depenses_electricite_seule > 0) & (poste_gaz_seul > 0)
+            )
+        moyenne_electricite = numpy.mean(depenses_electricite_seule * consomme_gaz_et_electricte_separement)
+        moyenne_gaz = numpy.mean(poste_gaz_seul * consomme_gaz_et_electricte_separement)
+        part_electricite = where(
+            moyenne_electricite + moyenne_gaz > 0,
+            moyenne_electricite / (moyenne_electricite + moyenne_gaz),
+            0,
+            )
+        depenses_electricite_factures_jointes = depenses_factures_jointes * part_electricite
         return depenses_electricite_factures_jointes
 
 
@@ -205,11 +204,9 @@ class depenses_electricite_prix_unitaire(YearlyVariable):
 
         # Note : les barèmes ne donnent que les prix unitaires pour 3 et 6 kva. Pour les puissances supérieures,
         # les valeurs sont assez proches de celles du compteur 6kva que nous utilisons comme proxy.
-        prix_unitaire_3kva = \
-            parameters(period.start).tarifs_energie.tarifs_reglementes_edf.prix_unitaire_base_edf_ttc.prix_kwh_3_kva
-        prix_unitaire_6kva = \
-            parameters(period.start).tarifs_energie.tarifs_reglementes_edf.prix_unitaire_base_edf_ttc.prix_kwh_6_kva
-
+        prix_unitaire_base_edf_ttc = parameters(period.start).tarifs_energie.tarifs_reglementes_edf.prix_unitaire_base_edf_ttc
+        prix_unitaire_3kva = prix_unitaire_base_edf_ttc.prix_kwh_3_kva
+        prix_unitaire_6kva = prix_unitaire_base_edf_ttc.prix_kwh_6_kva
         prix_unitaire = (
             (depenses_electricite_percentile < 4) * prix_unitaire_3kva
             + (depenses_electricite_percentile > 4) * prix_unitaire_6kva
@@ -224,9 +221,7 @@ class depenses_electricite_seule(YearlyVariable):
     label = "Dépenses en électricité sans inclure dépenses jointes avec le gaz"
 
     def formula(menage, period):
-        depenses_electricite_seule = menage('poste_04_5_1_1_1_b', period)
-
-        return depenses_electricite_seule
+        return menage('poste_04_5_1_1_1_b', period)
 
 
 class depenses_electricite_tarif_fixe(YearlyVariable):
@@ -268,7 +263,7 @@ class depenses_electricite_variables(YearlyVariable):
         depenses_electricite = menage('depenses_electricite', period)
         depenses_electricite_tarif_fixe = menage('depenses_electricite_tarif_fixe', period)
         depenses_electricite_variables = depenses_electricite - depenses_electricite_tarif_fixe
-        depenses_electricite_variables = numpy.maximum(depenses_electricite_variables, 0)
+        depenses_electricite_variables = max_(depenses_electricite_variables, 0)
 
         return depenses_electricite_variables
 
@@ -368,7 +363,6 @@ class depenses_gaz_factures_jointes(YearlyVariable):
         depenses_factures_jointes = menage('poste_04_5_1_1_1_a', period)
         depenses_electricite_factures_jointes = menage('depenses_electricite_factures_jointes', period)
         depenses_gaz_factures_jointes = depenses_factures_jointes - depenses_electricite_factures_jointes
-
         return depenses_gaz_factures_jointes
 
 
@@ -383,46 +377,100 @@ class depenses_gaz_liquefie(YearlyVariable):
         return depenses_gaz_liquefie
 
 
+class TypesContratGaz(Enum):
+    __order__ = 'base b0 b1 b2i'
+    base = "base",
+    b0 = "b0",
+    b1 = "b1",
+    b2i = "b2i",
+
+
+
+class depenses_gaz_contrat(YearlyVariable):
+    value_type = Enum
+    possible_values = TypesContratGaz
+    default_value = TypesContratGaz.base
+    entity = Menage
+    label = "Contrat de gaz"
+
+    def formula(menage, period, parameters):
+        tarifs_reglementes_gdf = parameters(period.start).tarifs_energie.tarifs_reglementes_gdf
+
+        depenses_gaz = menage('depenses_gaz_ville', period)
+
+        tarif_fixe_gaz = tarifs_reglementes_gdf.tarif_fixe_gdf_ttc.base_0_1000
+        depenses_sans_part_fixe = depenses_gaz - tarif_fixe_gaz
+        prix_unitaire_gaz = tarifs_reglementes_gdf.prix_unitaire_gdf_ttc.prix_kwh_base_ttc
+        quantite_base = depenses_sans_part_fixe / prix_unitaire_gaz
+
+        tarif_fixe_gaz = tarifs_reglementes_gdf.tarif_fixe_gdf_ttc.b0_1000_6000
+        depenses_sans_part_fixe = depenses_gaz - tarif_fixe_gaz
+        prix_unitaire_gaz = tarifs_reglementes_gdf.prix_unitaire_gdf_ttc.prix_kwh_b0_ttc
+        quantite_b0 = depenses_sans_part_fixe / prix_unitaire_gaz
+
+        tarif_fixe_gaz = tarifs_reglementes_gdf.tarif_fixe_gdf_ttc.b1_6_30000
+        depenses_sans_part_fixe = depenses_gaz - tarif_fixe_gaz
+        prix_unitaire_gaz = tarifs_reglementes_gdf.prix_unitaire_gdf_ttc.prix_kwh_b1_ttc
+        quantite_b1 = depenses_sans_part_fixe / prix_unitaire_gaz
+
+        tarif_fixe_gaz = tarifs_reglementes_gdf.tarif_fixe_gdf_ttc.b2i_30000
+        depenses_gaz_variables = depenses_gaz - tarif_fixe_gaz
+        prix_unitaire_gaz = tarifs_reglementes_gdf.prix_unitaire_gdf_ttc.prix_kwh_b2i_ttc
+        quantite_b2i = depenses_gaz_variables / prix_unitaire_gaz
+
+        quantite_optimale_base_b0 = numpy.maximum(quantite_base, quantite_b0)
+        quantite_optimale_base_b1 = numpy.maximum(quantite_optimale_base_b0, quantite_b1)
+        quantite_optimale_base_b2i = numpy.maximum(quantite_optimale_base_b1, quantite_b2i)
+        quantite_optimale = numpy.maximum(quantite_optimale_base_b2i, 0)
+
+        return select(
+            [
+                quantite_base == quantite_optimale,
+                quantite_b0 == quantite_optimale,
+                quantite_b1 == quantite_optimale,
+                quantite_b2i == quantite_optimale,
+                ],
+            [
+                TypesContratGaz.base,
+                TypesContratGaz.b0,
+                TypesContratGaz.b1,
+                TypesContratGaz.b2i,
+                ]
+            )
+
+
+
 class depenses_gaz_prix_unitaire(YearlyVariable):
     value_type = float
     entity = Menage
     label = "Prix unitaire du gaz rencontré par les ménages"
 
     def formula(menage, period, parameters):
-        quantite_base = menage('quantites_gaz_contrat_base', period)
-        quantite_b0 = menage('quantites_gaz_contrat_b0', period)
-        quantite_b1 = menage('quantites_gaz_contrat_b1', period)
-        quantite_b2i = menage('quantites_gaz_contrat_b2i', period)
-        quantite_optimale = menage('quantites_gaz_contrat_optimal', period)
-
-        prix_unitaire_base = \
-            parameters(period.start).tarifs_energie.tarifs_reglementes_gdf.prix_unitaire_gdf_ttc.prix_kwh_base_ttc
-        prix_unitaire_b0 = \
-            parameters(period.start).tarifs_energie.tarifs_reglementes_gdf.prix_unitaire_gdf_ttc.prix_kwh_b0_ttc
-        prix_unitaire_b1 = \
-            parameters(period.start).tarifs_energie.tarifs_reglementes_gdf.prix_unitaire_gdf_ttc.prix_kwh_b1_ttc
-        prix_unitaire_b2i = \
-            parameters(period.start).tarifs_energie.tarifs_reglementes_gdf.prix_unitaire_gdf_ttc.prix_kwh_b2i_ttc
-
-        prix_unitaire_optimal = (
-            (quantite_base == quantite_optimale) * prix_unitaire_base
-            + (quantite_b0 == quantite_optimale) * prix_unitaire_b0
-            + (quantite_b1 == quantite_optimale) * prix_unitaire_b1
-            + (quantite_b2i == quantite_optimale) * (quantite_b1 != quantite_optimale) * prix_unitaire_b2i
+        depenses_gaz_contrat = menage("depenses_gaz_contrat", period)
+        prix_unitaire_gdf_ttc = parameters(period.start).tarifs_energie.tarifs_reglementes_gdf.prix_unitaire_gdf_ttc
+        return select(
+            [
+                depenses_gaz_contrat == TypesContratGaz.base,
+                depenses_gaz_contrat == TypesContratGaz.b0,
+                depenses_gaz_contrat == TypesContratGaz.b1,
+                depenses_gaz_contrat == TypesContratGaz.b2i,
+                ],
+            [
+                prix_unitaire_gdf_ttc.prix_kwh_base_ttc,
+                prix_unitaire_gdf_ttc.prix_kwh_b0_ttc,
+                prix_unitaire_gdf_ttc.prix_kwh_b1_ttc,
+                prix_unitaire_gdf_ttc.prix_kwh_b2i_ttc,
+                ]
             )
 
-        return prix_unitaire_optimal
 
-
-class depenses_gaz_seul(YearlyVariable):
+class poste_gaz_seul(YearlyVariable):
     value_type = float
     entity = Menage
     label = "Dépenses en gaz de ville"
 
     def formula(menage, period):
-        depenses_gaz_seul = menage('poste_04_5_2_1_1', period)
-
-        return depenses_gaz_seul
+        return menage('poste_04_5_2_1_1', period)
 
 
 class depenses_gaz_tarif_fixe(YearlyVariable):
@@ -437,14 +485,11 @@ class depenses_gaz_tarif_fixe(YearlyVariable):
         quantite_b2i = menage('quantites_gaz_contrat_b2i', period)
         quantite_optimale = menage('quantites_gaz_contrat_optimal', period)
 
-        tarif_fixe_base = \
-            parameters(period.start).tarifs_energie.tarifs_reglementes_gdf.tarif_fixe_gdf_ttc.base_0_1000
-        tarif_fixe_b0 = \
-            parameters(period.start).tarifs_energie.tarifs_reglementes_gdf.tarif_fixe_gdf_ttc.b0_1000_6000
-        tarif_fixe_b1 = \
-            parameters(period.start).tarifs_energie.tarifs_reglementes_gdf.tarif_fixe_gdf_ttc.b1_6_30000
-        tarif_fixe_b2i = \
-            parameters(period.start).tarifs_energie.tarifs_reglementes_gdf.tarif_fixe_gdf_ttc.b2i_30000
+        tarif_fixe_gdf_ttc = parameters(period.start).tarifs_energie.tarifs_reglementes_gdf.tarif_fixe_gdf_ttc
+        tarif_fixe_base = tarif_fixe_gdf_ttc.base_0_1000
+        tarif_fixe_b0 = tarif_fixe_gdf_ttc.b0_1000_6000
+        tarif_fixe_b1 = tarif_fixe_gdf_ttc.b1_6_30000
+        tarif_fixe_b2i = tarif_fixe_gdf_ttc.b2i_30000
 
         tarif_fixe_optimal = (
             (quantite_base == quantite_optimale) * tarif_fixe_base
@@ -452,7 +497,6 @@ class depenses_gaz_tarif_fixe(YearlyVariable):
             + (quantite_b1 == quantite_optimale) * tarif_fixe_b1
             + (quantite_b2i == quantite_optimale) * (quantite_b1 != quantite_optimale) * tarif_fixe_b2i
             )
-
         return tarif_fixe_optimal
 
 
@@ -467,7 +511,6 @@ class depenses_gaz_variables(YearlyVariable):
 
         depenses_gaz_variables = depenses_gaz - tarif_fixe
         depenses_gaz_variables = numpy.maximum(depenses_gaz_variables, 0)
-
         return depenses_gaz_variables
 
 
@@ -477,9 +520,9 @@ class depenses_gaz_ville(YearlyVariable):
     label = "Dépenses en gaz estimées des factures jointes électricité et gaz"
 
     def formula(menage, period):
-        depenses_gaz_seul = menage('depenses_gaz_seul', period)
+        poste_gaz_seul = menage('poste_gaz_seul', period)
         depenses_gaz_factures_jointes = menage('depenses_gaz_factures_jointes', period)
-        depenses_gaz_ville = depenses_gaz_seul + depenses_gaz_factures_jointes
+        depenses_gaz_ville = poste_gaz_seul + depenses_gaz_factures_jointes
 
         return depenses_gaz_ville
 

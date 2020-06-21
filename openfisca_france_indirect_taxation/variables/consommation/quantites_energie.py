@@ -4,7 +4,7 @@
 import numpy
 
 from openfisca_france_indirect_taxation.variables.base import *  # noqa analysis:ignore
-
+from openfisca_france_indirect_taxation.variables.consommation.depenses_energies import TypesContratGaz
 
 class quantites_combustibles_liquides(YearlyVariable):
     value_type = float
@@ -169,92 +169,6 @@ class quantites_essence(YearlyVariable):
         return quantites_essence
 
 
-class quantites_gaz_contrat_base(YearlyVariable):
-    value_type = float
-    entity = Menage
-    label = "Quantité de gaz (en kWh) consommée par les ménages s'ils ont souscrit au contrat de base"
-
-    def formula(menage, period, parameters):
-        tarif_fixe_gaz = \
-            parameters(period.start).tarifs_energie.tarifs_reglementes_gdf.tarif_fixe_gdf_ttc.base_0_1000
-        depenses_gaz = menage('depenses_gaz_ville', period)
-        depenses_sans_part_fixe = depenses_gaz - tarif_fixe_gaz
-        prix_unitaire_gaz = \
-            parameters(period.start).tarifs_energie.tarifs_reglementes_gdf.prix_unitaire_gdf_ttc.prix_kwh_base_ttc
-        quantite_gaz = depenses_sans_part_fixe / prix_unitaire_gaz
-
-        return quantite_gaz
-
-
-class quantites_gaz_contrat_b0(YearlyVariable):
-    value_type = float
-    entity = Menage
-    label = "Quantité de gaz (en kWh) consommée par les ménages s'ils ont souscrit au contrat b0"
-
-    def formula(menage, period, parameters):
-        tarif_fixe_gaz = \
-            parameters(period.start).tarifs_energie.tarifs_reglementes_gdf.tarif_fixe_gdf_ttc.b0_1000_6000
-        depenses_gaz = menage('depenses_gaz_ville', period)
-        depenses_sans_part_fixe = depenses_gaz - tarif_fixe_gaz
-        prix_unitaire_gaz = \
-            parameters(period.start).tarifs_energie.tarifs_reglementes_gdf.prix_unitaire_gdf_ttc.prix_kwh_b0_ttc
-        quantite_gaz = depenses_sans_part_fixe / prix_unitaire_gaz
-
-        return quantite_gaz
-
-
-class quantites_gaz_contrat_b1(YearlyVariable):
-    value_type = float
-    entity = Menage
-    label = "Quantité de gaz (en kWh) consommée par les ménages s'ils ont souscrit au contrat b1"
-
-    def formula(menage, period, parameters):
-        tarif_fixe_gaz = \
-            parameters(period.start).tarifs_energie.tarifs_reglementes_gdf.tarif_fixe_gdf_ttc.b1_6_30000
-        depenses_gaz = menage('depenses_gaz_ville', period)
-        depenses_sans_part_fixe = depenses_gaz - tarif_fixe_gaz
-        prix_unitaire_gaz = \
-            parameters(period.start).tarifs_energie.tarifs_reglementes_gdf.prix_unitaire_gdf_ttc.prix_kwh_b1_ttc
-        quantite_gaz = depenses_sans_part_fixe / prix_unitaire_gaz
-
-        return quantite_gaz
-
-
-class quantites_gaz_contrat_b2i(YearlyVariable):
-    value_type = float
-    entity = Menage
-    label = "Quantité de gaz (en kWh) consommée par les ménages s'ils ont souscrit au contrat b2i"
-
-    def formula(menage, period, parameters):
-        tarif_fixe_gaz = \
-            parameters(period.start).tarifs_energie.tarifs_reglementes_gdf.tarif_fixe_gdf_ttc.b2i_30000
-        depenses_gaz = menage('depenses_gaz_ville', period)
-        depenses_gaz_variables = depenses_gaz - tarif_fixe_gaz
-        prix_unitaire_gaz = \
-            parameters(period.start).tarifs_energie.tarifs_reglementes_gdf.prix_unitaire_gdf_ttc.prix_kwh_b2i_ttc
-        quantite_gaz = depenses_gaz_variables / prix_unitaire_gaz
-
-        return quantite_gaz
-
-
-class quantites_gaz_contrat_optimal(YearlyVariable):
-    value_type = float
-    entity = Menage
-    label = "Quantité de gaz (en kWh) consommée par les ménages s'ils ont souscrit au meilleur contrat"
-
-    def formula(menage, period):
-        quantite_base = menage('quantites_gaz_contrat_base', period)
-        quantite_b0 = menage('quantites_gaz_contrat_b0', period)
-        quantite_b1 = menage('quantites_gaz_contrat_b1', period)
-        quantite_b2i = menage('quantites_gaz_contrat_b2i', period)
-        quantite_optimale_base_b0 = numpy.maximum(quantite_base, quantite_b0)
-        quantite_optimale_base_b1 = numpy.maximum(quantite_optimale_base_b0, quantite_b1)
-        quantite_optimale_base_b2i = numpy.maximum(quantite_optimale_base_b1, quantite_b2i)
-        quantite_optimale = numpy.maximum(quantite_optimale_base_b2i, 0)
-
-        return quantite_optimale
-
-
 class quantites_gaz_final(YearlyVariable):
     value_type = float
     entity = Menage
@@ -265,7 +179,8 @@ class quantites_gaz_final(YearlyVariable):
         depenses_gaz_prix_unitaire = menage('depenses_gaz_prix_unitaire', period)
         tarifs_sociaux_gaz = menage('tarifs_sociaux_gaz', period)
 
-        # Ceux qui ne consomment pas de gaz ayant depenses_gaz_prix_unitaire = 0, on remplace 0 par 1 pour éviter de diviser par zéro
+        # Ceux qui ne consomment pas de gaz ayant depenses_gaz_prix_unitaire = 0,
+        # on remplace 0 par 1 pour éviter de diviser par zéro
         depenses_gaz_prix_unitaire = depenses_gaz_prix_unitaire + 1 * (depenses_gaz_prix_unitaire == 0)
         quantites_gaz_finale = quantites_gaz_contrat_optimal + (tarifs_sociaux_gaz / depenses_gaz_prix_unitaire * (depenses_gaz_prix_unitaire != 0))
 
@@ -366,3 +281,47 @@ class quantites_super_plombe(YearlyVariable):
         quantite_super_plombe = depenses_super_plombe / super_plombe_ttc * 100
 
         return quantite_super_plombe
+
+
+class quantites_gaz(YearlyVariable):
+    value_type = float
+    entity = Menage
+    label = "Quantité de gaz (en kWh) consommée par les ménages selon leur contrat"
+
+    def formula(menage, period, parameters):
+        depenses_gaz_contrat = menage('depenses_gaz_contrat', period)
+        tarif_fixe_gdf_ttc = parameters(period.start).tarifs_energie.tarifs_reglementes_gdf.tarif_fixe_gdf_ttc
+        tarif_fixe_gaz = select(
+            [
+                depenses_gaz_contrat == TypesContratGaz.base,
+                depenses_gaz_contrat == TypesContratGaz.b0,
+                depenses_gaz_contrat == TypesContratGaz.b1,
+                depenses_gaz_contrat == TypesContratGaz.b2i,
+                ],
+             [
+                tarif_fixe_gdf_ttc.base_0_1000,
+                tarif_fixe_gdf_ttc.b0_1000_6000,
+                tarif_fixe_gdf_ttc.b1_6_30000,
+                tarif_fixe_gdf_ttc.b2i_30000,
+                ]
+            )
+        depenses_gaz = menage('depenses_gaz_ville', period)
+        depenses_sans_part_fixe = depenses_gaz - tarif_fixe_gaz
+        prix_unitaire_gdf_ttc = parameters(period.start).tarifs_energie.tarifs_reglementes_gdf.prix_unitaire_gdf_ttc
+        prix_unitaire_gaz = select(
+            [
+                depenses_gaz_contrat == TypesContratGaz.base,
+                depenses_gaz_contrat == TypesContratGaz.b0,
+                depenses_gaz_contrat == TypesContratGaz.b1,
+                depenses_gaz_contrat == TypesContratGaz.b2i,
+                ],
+            [
+                prix_unitaire_gdf_ttc.prix_kwh_base_ttc,
+                prix_unitaire_gdf_ttc.prix_kwh_b0_ttc,
+                prix_unitaire_gdf_ttc.prix_kwh_b1_ttc,
+                prix_unitaire_gdf_ttc.prix_kwh_b2i_ttc,
+                ]
+            )
+        quantite_gaz = depenses_sans_part_fixe / prix_unitaire_gaz
+
+        return quantite_gaz

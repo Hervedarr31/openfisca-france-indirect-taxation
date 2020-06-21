@@ -11,6 +11,37 @@ class depenses_carburants(YearlyVariable):
         return menage('depenses_diesel', period) + menage('depenses_essence', period)
 
 
+class depenses_combustibles_liquides(YearlyVariable):
+    value_type = float
+    entity = Menage
+    label = "Dépenses en combustibles liquides tenant compte d'une éventuelle réponse à une évolution des prix"
+
+    def formula(menage, period, parameters):
+        prix_fioul_domestique = parameters(period.start).tarifs_energie.prix_fioul_domestique
+        depenses_combustibles_liquides = menage('poste_combustibles_liquides', period)
+        try:
+            prix_fioul_ttc_reference = \
+                prix_fioul_domestique.prix_annuel_moyen_fioul_domestique_ttc_livraisons_2000_4999_litres_en_euro_par_litre_reference
+            assert super_95_ttc_reference is not None
+            delta_prix_fioul_ttc = (
+                prix_fioul_domestique.prix_annuel_moyen_fioul_domestique_ttc_livraisons_2000_4999_litres_en_euro_par_litre
+                - prix_fioul_ttc_reference
+                )
+        except ParameterNotFound:
+            delta_prix_fioul_ttc = None
+
+        if delta_prix_fioul_ttc:
+            combustibles_liquides_elasticite_prix = menage('elas_price_2_2', period)
+            depenses_combustibles_liquides_ajustees = (
+                depenses_combustibles_liquides
+                * (1 + (1 + combustibles_liquides_elasticite_prix) * delta_prix_fioul_ttc / prix_fioul_ttc_reference)
+                )
+            return depenses_combustibles_liquides_ajustees
+
+        else:
+            return depenses_combustibles_liquides
+
+
 class depenses_essence(YearlyVariable):
     value_type = float
     entity = Menage
@@ -31,7 +62,8 @@ class depenses_essence(YearlyVariable):
         if delta_super_95_ttc:
             carburants_elasticite_prix = menage('elas_price_1_1', period)
             depenses_essence_ajustees = (
-                depenses_essence * (1 + (1 + carburants_elasticite_prix) * delta_super_95_ttc / super_95_ttc_reference)
+                depenses_essence
+                * (1 + (1 + carburants_elasticite_prix) * delta_super_95_ttc / super_95_ttc_reference)
                 )
             return depenses_essence_ajustees
         else:

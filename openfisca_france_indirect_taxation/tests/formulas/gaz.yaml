@@ -1,0 +1,29 @@
+- name: "Test gaz_prix_unitaire base"
+  period: 2016
+  absolute_error_margin: .01
+  input:
+    poste_04_5_2_1_1: 100
+  output:
+    poste_gaz_seul: 100
+    depenses_electricite_seule: 0
+    depenses_electricite_factures_jointes: 0
+    depenses_gaz_factures_jointes: 0
+    depenses_gaz_ville: 100
+    depenses_gaz_contrat: "base"
+    depenses_gaz_prix_unitaire: 0.0897
+    quantites_gaz: 247.93755
+
+- name: "Test gaz_prix_unitaire b0"
+  period: 2016
+  absolute_error_margin: .01
+  input:
+    poste_04_5_2_1_1: 300
+  output:
+    poste_gaz_seul: 300
+    depenses_electricite_seule: 0
+    depenses_electricite_factures_jointes: 0
+    depenses_gaz_factures_jointes: 0
+    depenses_gaz_ville: 300
+    depenses_gaz_contrat: "b0"
+    depenses_gaz_prix_unitaire: 0.0708
+    quantites_gaz: 2932.3447

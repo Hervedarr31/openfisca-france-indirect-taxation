@@ -28,8 +28,10 @@ class reforme_energie_test(Reform):
 # Helpers
 
 def build_prix_carburants_reference(parameters):
-    for child_key, child_node in parameters.prix_carburants.children.copy().items():
-        reference = child_node.clone()
-        parameters.prix_carburants.add_child("{}_reference".format(child_key), reference)
+
+    for node in [parameters.prix_carburants, parameters.tarifs_energie.prix_fioul_domestique]:
+        for child_key, child_node in node.children.copy().items():
+            reference = child_node.clone()
+            parameters.prix_carburants.add_child("{}_reference".format(child_key), reference)
 
     return parameters
