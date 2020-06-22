@@ -385,6 +385,16 @@ class TypesContratGaz(Enum):
     b2i = "b2i",
 
 
+class poste_gaz_ville(YearlyVariable):
+    value_type = float
+    entity = Menage
+    label = "Dépenses en gaz estimées des factures jointes électricité et gaz"
+    def formula(menage, period):
+        poste_gaz_seul = menage('poste_gaz_seul', period)
+        depenses_gaz_factures_jointes = menage('depenses_gaz_factures_jointes', period)
+        depenses_gaz_ville = poste_gaz_seul + depenses_gaz_factures_jointes
+        return depenses_gaz_ville
+
 
 class depenses_gaz_contrat(YearlyVariable):
     value_type = Enum
@@ -396,7 +406,7 @@ class depenses_gaz_contrat(YearlyVariable):
     def formula(menage, period, parameters):
         tarifs_reglementes_gdf = parameters(period.start).tarifs_energie.tarifs_reglementes_gdf
 
-        depenses_gaz = menage('depenses_gaz_ville', period)
+        depenses_gaz = menage('poste_gaz_ville', period)
 
         tarif_fixe_gaz = tarifs_reglementes_gdf.tarif_fixe_gdf_ttc.base_0_1000
         depenses_sans_part_fixe = depenses_gaz - tarif_fixe_gaz
@@ -479,25 +489,23 @@ class depenses_gaz_tarif_fixe(YearlyVariable):
     label = "Dépenses en gaz des ménages sur le coût fixe de l'abonnement"
 
     def formula(menage, period, parameters):
-        quantite_base = menage('quantites_gaz_contrat_base', period)
-        quantite_b0 = menage('quantites_gaz_contrat_b0', period)
-        quantite_b1 = menage('quantites_gaz_contrat_b1', period)
-        quantite_b2i = menage('quantites_gaz_contrat_b2i', period)
-        quantite_optimale = menage('quantites_gaz_contrat_optimal', period)
-
+        depenses_gaz_contrat = menage('depenses_gaz_contrat', period)
         tarif_fixe_gdf_ttc = parameters(period.start).tarifs_energie.tarifs_reglementes_gdf.tarif_fixe_gdf_ttc
-        tarif_fixe_base = tarif_fixe_gdf_ttc.base_0_1000
-        tarif_fixe_b0 = tarif_fixe_gdf_ttc.b0_1000_6000
-        tarif_fixe_b1 = tarif_fixe_gdf_ttc.b1_6_30000
-        tarif_fixe_b2i = tarif_fixe_gdf_ttc.b2i_30000
-
-        tarif_fixe_optimal = (
-            (quantite_base == quantite_optimale) * tarif_fixe_base
-            + (quantite_b0 == quantite_optimale) * tarif_fixe_b0
-            + (quantite_b1 == quantite_optimale) * tarif_fixe_b1
-            + (quantite_b2i == quantite_optimale) * (quantite_b1 != quantite_optimale) * tarif_fixe_b2i
+        tarif_fixe = select(
+            [
+                depenses_gaz_contrat == TypesContratGaz.base,
+                depenses_gaz_contrat == TypesContratGaz.b0,
+                depenses_gaz_contrat == TypesContratGaz.b1,
+                depenses_gaz_contrat == TypesContratGaz.b2i,
+                ],
+            [
+                tarif_fixe_gdf_ttc.base_0_1000,
+                tarif_fixe_gdf_ttc.b0_1000_6000,
+                tarif_fixe_gdf_ttc.b1_6_30000,
+                tarif_fixe_gdf_ttc.b2i_30000,
+                ]
             )
-        return tarif_fixe_optimal
+        return tarif_fixe
 
 
 class depenses_gaz_variables(YearlyVariable):
@@ -506,25 +514,12 @@ class depenses_gaz_variables(YearlyVariable):
     label = "Dépenses en gaz des ménages, hors coût fixe de l'abonnement"
 
     def formula(menage, period):
-        depenses_gaz = menage('depenses_gaz_ville', period)
+        depenses_gaz = menage('poste_gaz_ville', period)
         tarif_fixe = menage('depenses_gaz_tarif_fixe', period)
 
         depenses_gaz_variables = depenses_gaz - tarif_fixe
         depenses_gaz_variables = numpy.maximum(depenses_gaz_variables, 0)
         return depenses_gaz_variables
-
-
-class depenses_gaz_ville(YearlyVariable):
-    value_type = float
-    entity = Menage
-    label = "Dépenses en gaz estimées des factures jointes électricité et gaz"
-
-    def formula(menage, period):
-        poste_gaz_seul = menage('poste_gaz_seul', period)
-        depenses_gaz_factures_jointes = menage('depenses_gaz_factures_jointes', period)
-        depenses_gaz_ville = poste_gaz_seul + depenses_gaz_factures_jointes
-
-        return depenses_gaz_ville
 
 
 class depenses_sp_e10(YearlyVariable):

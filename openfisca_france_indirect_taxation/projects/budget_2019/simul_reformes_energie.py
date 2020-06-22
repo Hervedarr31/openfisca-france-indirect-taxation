@@ -62,6 +62,10 @@ def simulate_reformes_energie(graph = True):
     # Simulation des effets de différentes réformes
 
     # a partir de la reforme 2019_in_2017
+    # revenu_reforme_officielle_2019_in_2017 =
+    # total_taxes_energies_officielle_2019_in_2017 - total_taxes_energies
+    # + gains_tva_total_energies + tarifs_sociaux_electricite + tarifs_sociaux_gaz
+
     df['cout_reforme_pures_taxes'] = (
         df['revenu_reforme_officielle_2019_in_2017']
         - df['tarifs_sociaux_electricite'] - df['tarifs_sociaux_gaz']

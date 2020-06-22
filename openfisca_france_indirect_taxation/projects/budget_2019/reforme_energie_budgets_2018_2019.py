@@ -7,55 +7,70 @@ from openfisca_france_indirect_taxation import FranceIndirectTaxationTaxBenefitS
 from openfisca_france_indirect_taxation.variables.base import *  # noqa analysis:ignore
 from openfisca_france_indirect_taxation.reforms.reforme_energie_test import build_prix_carburants_reference
 
-def modify_parameters(parameters):
 
+def modify_parameters(parameters):
+    period = '2016'
     parameters = build_prix_carburants_reference(parameters)
+
+    reference_value = parameters(period).prix_carburants.diesel_ttc_reference
     parameters.prix_carburants.diesel_ttc.update(
-        period = '2016',
+        period = period,
         value = reference_value + 1 * 2.6 + 266 * (0.0446 - 0.0305)  # 266 = valeur du contenu carbone du diesel (source : Ademe)
         )
+
+    reference_value = parameters(period).prix_carburants.super_95_ttc_reference
     parameters.prix_carburants.super_95_ttc.update(
-        period = '2016',
+        period = period,
         value = reference_value + 242 * (0.0446 - 0.0305)  # 242 = valeur du contenu carbone du diesel (source : Ademe)
         )
+
+    reference_value = \
+        parameters(period).tarifs_energie.prix_fioul_domestique.prix_annuel_moyen_fioul_domestique_ttc_livraisons_2000_4999_litres_en_euro_par_litre_reference
     parameters.tarifs_energie.prix_fioul_domestique.prix_annuel_moyen_fioul_domestique_ttc_livraisons_2000_4999_litres_en_euro_par_litre.update(
-        period = '2016',
+        period = period,
         value = reference_value + 3.24 * (0.0446 - 0.0305)  # (en euros par litre)
         )
-    TODO
-    parameters.prix_carburants.TODO.update(
-        period = '2016',
-        value = reference_value + 0.241 * (0.0446 - 0.0305)   # (en euros par kWh)
-        )
+    prix_unitaire_gdf_ttc = parameters.tarifs_energie.tarifs_reglementes_gdf.prix_unitaire_gdf_ttc
 
-
-    # node = ParameterNode(
-    #     'officielle_2019_in_2017',
-    #     data = {
-    #         "description": "officielle_2019_in_2017",
-    #         "diesel_2019_in_2017": {
-    #             "description": "Surcroît de prix du diesel (en euros par hectolitres)",
+    for node in [
+            prix_unitaire_gdf_ttc.prix_kwh_base_ttc,
+            prix_unitaire_gdf_ttc.prix_kwh_b0_ttc,
+            prix_unitaire_gdf_ttc.prix_kwh_b1_ttc,
+            prix_unitaire_gdf_ttc.prix_kwh_b2i_ttc,
+            ]:
+        name = node.name.split(".")[-1:][0]
+        reference_value = prix_unitaire_gdf_ttc.children[name + '_reference'](period)
+        node.update(
+            period = period,
+            value = reference_value + 0.241 * (0.0446 - 0.0305)  # (en euros par kWh)
+            )
+    # # node = ParameterNode(
+    # #     'officielle_2019_in_2017',
+    # #     data = {
+    # #         "description": "officielle_2019_in_2017",
+    # #         "diesel_2019_in_2017": {
+    # #             "description": "Surcroît de prix du diesel (en euros par hectolitres)",
+    # #             "unit": 'currency',
+    # #             "values": {'2016-01-01':
+    # #             },
+    #         # "essence_2019_in_2017": {
+    #         #     "description": "Surcroît de prix de l'essence (en euros par hectolitres)",
+    #         #     "unit": 'currency',
+    #         #     "values": {'2016-01-01': 242 * (0.0446 - 0.0305)},
+    #         #     },
+    #         "combustibles_liquides_2019_in_2017": {
+    #             "description": "Surcroît de prix du fioul domestique (en euros par litre)",
     #             "unit": 'currency',
-    #             "values": {'2016-01-01':
+    #             "values": {'2016-01-01': 3.24 * (0.0446 - 0.0305)},
     #             },
-            # "essence_2019_in_2017": {
-            #     "description": "Surcroît de prix de l'essence (en euros par hectolitres)",
-            #     "unit": 'currency',
-            #     "values": {'2016-01-01': 242 * (0.0446 - 0.0305)},
-            #     },
-            "combustibles_liquides_2019_in_2017": {
-                "description": "Surcroît de prix du fioul domestique (en euros par litre)",
-                "unit": 'currency',
-                "values": {'2016-01-01': 3.24 * (0.0446 - 0.0305)},
-                },
-            "gaz_ville_2019_in_2017": {
-                "description": "Surcroît de prix du gaz (en euros par kWh)",
-                "unit": 'currency',
-                "values": {'2016-01-01': 0.241 * (0.0446 - 0.0305)},
-                },
-            }
-        )
-    parameters.add_child('officielle_2019_in_2017', node)
+    #         "gaz_ville_2019_in_2017": {
+    #             "description": "Surcroît de prix du gaz (en euros par kWh)",
+    #             "unit": 'currency',
+    #             "values": {'2016-01-01': 0.241 * (0.0446 - 0.0305)},
+    #             },
+    #         }
+    #     )
+    # parameters.add_child('officielle_2019_in_2017', node)
 
     parameters.prestations.add_child(
         'cheque_energie_reforme',
@@ -147,30 +162,83 @@ class officielle_2019_in_2017(Reform):
             return depenses_energies_logement_officielle_2019_in_2017
 
 
-    class depenses_gaz_ville_officielle_2019_in_2017(YearlyVariable):
-        value_type = float
-        entity = Menage
-        label = "Dépenses en gaz après réaction à la réforme"
+class depenses_gaz_ville(YearlyVariable):
+    value_type = float
+    entity = Menage
+    label = "Dépenses en gaz après réaction à la réforme - taxe carbone"
 
-        def formula(menage, period, parameters):
-            depenses_gaz_variables = menage('depenses_gaz_variables', period)
-            # Avec la réforme ces tarifs disparaissent, de nouvelles consommations entrent dans les dépenses des ménages :
-            tarifs_sociaux_gaz = menage('tarifs_sociaux_gaz', period)
-            depenses_gaz_variables = depenses_gaz_variables + tarifs_sociaux_gaz
+    def formula(menage, period, parameters):
+        depenses_gaz_variables = menage('depenses_gaz_variables', period)
+        # Avec la réforme ces tarifs disparaissent, de nouvelles consommations entrent dans les dépenses des ménages :
+        tarifs_sociaux_gaz = menage('tarifs_sociaux_gaz', period)
+        depenses_gaz_variables = depenses_gaz_variables + tarifs_sociaux_gaz
+        depenses_gaz_prix_unitaire = menage('depenses_gaz_prix_unitaire', period)
+        depenses_gaz_contrat = menage('depenses_gaz_contrat', period)
+        try:
+            prix_unitaire_gdf_ttc = parameters(period.start).tarifs_energie.tarifs_reglementes_gdf.prix_unitaire_gdf_ttc
+            gaz_prix_unitaire_reference = select(
+                [
+                    depenses_gaz_contrat == TypesContratGaz.base,
+                    depenses_gaz_contrat == TypesContratGaz.b0,
+                    depenses_gaz_contrat == TypesContratGaz.b1,
+                    depenses_gaz_contrat == TypesContratGaz.b2i,
+                    ],
+                [
+                    prix_unitaire_gdf_ttc.prix_kwh_base_ttc - prix_unitaire_gdf_ttc.prix_kwh_base_ttc_reference,
+                    prix_unitaire_gdf_ttc.prix_kwh_b0_ttc - prix_unitaire_gdf_ttc.prix_kwh_b0_ttc_reference,
+                    prix_unitaire_gdf_ttc.prix_kwh_b1_ttc - prix_unitaire_gdf_ttc.prix_kwh_b1_ttc_reference,
+                    prix_unitaire_gdf_ttc.prix_kwh_b2i_ttc - prix_unitaire_gdf_ttc.prix_kwh_b2i_ttc_reference,
+                    ]
+                )
+            assert prix_unitaire_gdf_ttc.prix_kwh_base_ttc_reference is not None
+            assert prix_unitaire_gdf_ttc.prix_kwh_b0_ttc_reference is not None
+            assert prix_unitaire_gdf_ttc.prix_kwh_b1_ttc_reference is not None
+            assert prix_unitaire_gdf_ttc.prix_kwh_b2i_ttc_reference is not None
+            delta_prix_unitaire_gdf_kwh_ttc = depenses_gaz_prix_unitaire - gaz_prix_unitaire_reference
 
-            depenses_gaz_prix_unitaire = menage('depenses_gaz_prix_unitaire', period)
-            reforme_gaz = \
-                parameters(period.start).officielle_2019_in_2017.gaz_ville_2019_in_2017
+        except ParameterNotFound:
+            delta_prix_unitaire_gdf_kwh_ttc = None
+
+        depenses_gaz_tarif_fixe = menage('depenses_gaz_tarif_fixe', period)
+
+        if delta_prix_unitaire_gdf_kwh_ttc is not None:
             gaz_elasticite_prix = menage('elas_price_2_2', period)
-            depenses_gaz_variables = \
-                depenses_gaz_variables * (1 + (1 + gaz_elasticite_prix) * reforme_gaz / depenses_gaz_prix_unitaire)
-            depenses_gaz_tarif_fixe = menage('depenses_gaz_tarif_fixe', period)
-            depenses_gaz_ajustees = depenses_gaz_variables + depenses_gaz_tarif_fixe
-            depenses_gaz_ajustees = numpy.array(depenses_gaz_ajustees, dtype = float)
+            depenses_gaz_ajustees_variables = \
+                depenses_gaz_variables * (1 + (1 + gaz_elasticite_prix) * delta_prix_unitaire_gdf_kwh_ttc / depenses_gaz_prix_unitaire)
+
+            depenses_gaz_ajustees = depenses_gaz_ajustees_variables + depenses_gaz_tarif_fixe
+
             depenses_gaz_ajustees[numpy.isnan(depenses_gaz_ajustees)] = 0
             depenses_gaz_ajustees[numpy.isinf(depenses_gaz_ajustees)] = 0
-
             return depenses_gaz_ajustees
+
+        else:
+            return depenses_gaz_variables + depenses_gaz_tarif_fixe
+
+    # class depenses_gaz_ville_officielle_2019_in_2017(YearlyVariable):
+    #     value_type = float
+    #     entity = Menage
+    #     label = "Dépenses en gaz après réaction à la réforme"
+
+    #     def formula(menage, period, parameters):
+    #         depenses_gaz_variables = menage('depenses_gaz_variables', period)
+    #         # Avec la réforme ces tarifs disparaissent, de nouvelles consommations entrent dans les dépenses des ménages :
+    #         tarifs_sociaux_gaz = menage('tarifs_sociaux_gaz', period)
+    #         depenses_gaz_variables = depenses_gaz_variables + tarifs_sociaux_gaz
+
+    #         depenses_gaz_prix_unitaire = menage('depenses_gaz_prix_unitaire', period)
+    #         reforme_gaz = \
+    #             parameters(period.start).officielle_2019_in_2017.gaz_ville_2019_in_2017
+    #         gaz_elasticite_prix = menage('elas_price_2_2', period)
+    #         depenses_gaz_variables = \
+    #             depenses_gaz_variables * (1 + (1 + gaz_elasticite_prix) * reforme_gaz / depenses_gaz_prix_unitaire)
+    #         depenses_gaz_tarif_fixe = menage('depenses_gaz_tarif_fixe', period)
+    #         depenses_gaz_ajustees = depenses_gaz_variables + depenses_gaz_tarif_fixe
+    #         depenses_gaz_ajustees = numpy.array(depenses_gaz_ajustees, dtype = float)
+    #         depenses_gaz_ajustees[numpy.isnan(depenses_gaz_ajustees)] = 0
+    #         depenses_gaz_ajustees[numpy.isinf(depenses_gaz_ajustees)] = 0
+
+    #         return depenses_gaz_ajustees
 
 
     class gains_tva_carburants_officielle_2019_in_2017(YearlyVariable):
@@ -330,7 +398,7 @@ class officielle_2019_in_2017(Reform):
     def apply(self):
         self.update_variable(self.cheques_energie)
         self.update_variable(self.depenses_energies_logement_officielle_2019_in_2017)
-        self.update_variable(self.depenses_gaz_ville_officielle_2019_in_2017)
+        # self.update_variable(self.depenses_gaz_ville_officielle_2019_in_2017)
         self.update_variable(self.gains_tva_carburants_officielle_2019_in_2017)
         self.update_variable(self.gains_tva_combustibles_liquides_officielle_2019_in_2017)
         self.update_variable(self.gains_tva_gaz_ville_officielle_2019_in_2017)
