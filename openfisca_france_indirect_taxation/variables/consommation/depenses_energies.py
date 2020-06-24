@@ -382,7 +382,7 @@ class TypesContratGaz(Enum):
     base = "base",
     b0 = "b0",
     b1 = "b1",
-    b2i = "b2i",
+    b2i = "b2i"
 
 
 class poste_gaz_ville(YearlyVariable):

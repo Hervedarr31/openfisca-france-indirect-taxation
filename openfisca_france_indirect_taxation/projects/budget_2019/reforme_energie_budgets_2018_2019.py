@@ -30,6 +30,15 @@ def modify_parameters(parameters):
         period = period,
         value = reference_value + 3.24 * (0.0446 - 0.0305)  # (en euros par litre)
         )
+
+    parameters.imposition_indirecte.produits_energetiques.ticpe.gazole_fioul_domestique_hectolitre.update(
+        period = period,
+        value = (
+            parameters(period).imposition_indirecte.produits_energetiques.ticpe.gazole_fioul_domestique_hectolitre
+            + 100 * 3.24 * (0.0446 - 0.0305)  # (en euros par litre)
+            )
+        )
+
     prix_unitaire_gdf_ttc = parameters.tarifs_energie.tarifs_reglementes_gdf.prix_unitaire_gdf_ttc
 
     for node in [
@@ -44,33 +53,6 @@ def modify_parameters(parameters):
             period = period,
             value = reference_value + 0.241 * (0.0446 - 0.0305)  # (en euros par kWh)
             )
-    # # node = ParameterNode(
-    # #     'officielle_2019_in_2017',
-    # #     data = {
-    # #         "description": "officielle_2019_in_2017",
-    # #         "diesel_2019_in_2017": {
-    # #             "description": "Surcroît de prix du diesel (en euros par hectolitres)",
-    # #             "unit": 'currency',
-    # #             "values": {'2016-01-01':
-    # #             },
-    #         # "essence_2019_in_2017": {
-    #         #     "description": "Surcroît de prix de l'essence (en euros par hectolitres)",
-    #         #     "unit": 'currency',
-    #         #     "values": {'2016-01-01': 242 * (0.0446 - 0.0305)},
-    #         #     },
-    #         "combustibles_liquides_2019_in_2017": {
-    #             "description": "Surcroît de prix du fioul domestique (en euros par litre)",
-    #             "unit": 'currency',
-    #             "values": {'2016-01-01': 3.24 * (0.0446 - 0.0305)},
-    #             },
-    #         "gaz_ville_2019_in_2017": {
-    #             "description": "Surcroît de prix du gaz (en euros par kWh)",
-    #             "unit": 'currency',
-    #             "values": {'2016-01-01': 0.241 * (0.0446 - 0.0305)},
-    #             },
-    #         }
-    #     )
-    # parameters.add_child('officielle_2019_in_2017', node)
 
     parameters.prestations.add_child(
         'cheque_energie_reforme',
@@ -132,7 +114,7 @@ class officielle_2019_in_2017(Reform):
                 / (prix_fioul_ttc_ajuste - accise_combustibles_liquides_ajustee * (1 + taux_plein_tva))
                 )
 
-            depenses_combustibles_liquides_ajustees = menage('depenses_combustibles_liquides_officielle_2019_in_2017', period)
+            depenses_combustibles_liquides_ajustees = menage('depenses_combustibles_liquides', period)
             depenses_combustibles_liquides_htva = \
                 depenses_combustibles_liquides_ajustees - tax_from_expense_including_tax(depenses_combustibles_liquides_ajustees, taux_plein_tva)
             montant_combustibles_liquides_ticpe_ajuste = \

@@ -1,0 +1,10 @@
+- name: "Test gaz_prix_unitaire base"
+  period: 2016
+  absolute_error_margin: .01
+  input:
+    poste_04_5_3_1_1: 100
+  output:
+    poste_combustibles_liquides: 100
+    depenses_combustibles_liquides: 100
+    combustibles_liquides_ticpe: 15.103512
+    combustibles_liquides_ticpe: 15.103512

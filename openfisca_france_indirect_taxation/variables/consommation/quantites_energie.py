@@ -6,16 +6,17 @@ import numpy
 from openfisca_france_indirect_taxation.variables.base import *  # noqa analysis:ignore
 from openfisca_france_indirect_taxation.variables.consommation.depenses_energies import TypesContratGaz
 
+
 class quantites_combustibles_liquides(YearlyVariable):
     value_type = float
     entity = Menage
     label = "Quantité de combustibles solides (en litres) consommée par les ménages"
 
     def formula(menage, period, parameters):
+        prix_fioul_domestique = parameters(period.start).tarifs_energie.prix_fioul_domestique
         depenses_combustibles_liquides = menage('depenses_combustibles_liquides', period)
         prix_combustibles_liquides = \
-            parameters(period.start).tarifs_energie.prix_fioul_domestique.prix_annuel_moyen_fioul_domestique_ttc_livraisons_2000_4999_litres_en_euro_par_litre
-
+            prix_fioul_domestique.prix_annuel_moyen_fioul_domestique_ttc_livraisons_2000_4999_litres_en_euro_par_litre
         quantite_combustibles_liquides = depenses_combustibles_liquides / prix_combustibles_liquides
 
         return quantite_combustibles_liquides
