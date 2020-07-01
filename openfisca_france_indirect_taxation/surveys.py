@@ -65,6 +65,7 @@ class SurveyScenario(AbstractSurveyScenario):
         survey_scenario.used_as_input_variables = set(input_data_frame.columns).intersection(
             set(tax_benefit_system.variables.keys()))
         survey_scenario.year = year
+        survey_scenario.data_year = data_year
         data = dict(input_data_frame = input_data_frame)
 
         survey_scenario.init_from_data(data = data)
@@ -81,6 +82,41 @@ class SurveyScenario(AbstractSurveyScenario):
         assert survey_scenario.tax_benefit_system is not None
 
         return survey_scenario
+
+    def custom_initialize(self, simulation):
+        """
+        Applique des modifications aux simulations
+        """
+
+        if self.baseline_simulation is not None:
+            use_baseline = simulation == self.baseline_simulation
+        else:
+            self.baseline_simulation = simulation
+            use_baseline = True
+
+        # Cas des réformes de suppression des tarifs_sociaux_gaz
+        if not use_baseline:
+            period = self.year
+            tax_benefit_system = self.simulation.tax_benefit_system
+            tarifs_sociaux_gaz_variable = tax_benefit_system.variables['tarifs_sociaux_gaz']
+            if (
+                tarifs_sociaux_gaz_variable.is_neutralized
+                # or (
+                #     tarifs_sociaux_gaz_variable.end is not None
+                #     and tarifs_sociaux_gaz_variable.end <= self.year
+                #     )
+                ):
+
+                tarifs_sociaux_gaz_value = self.baseline_simulation.calculate("tarifs_sociaux_gaz", period = period)
+                depenses_gaz_variables_value = self.baseline_simulation.calculate("depenses_gaz_variables", period = period)
+                simulation.set_input(
+                    "depenses_gaz_variables",
+                    period,
+                    depenses_gaz_variables_value + tarifs_sociaux_gaz_value
+                    )
+
+        # TODO traiter les cas de la dispartion en réforme _et_ baseline des tarifs_sociaux
+
 
     def initialize_weights(self):
         self.weight_variable_by_entity = dict()

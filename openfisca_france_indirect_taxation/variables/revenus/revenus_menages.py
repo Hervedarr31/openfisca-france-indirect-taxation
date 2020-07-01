@@ -90,7 +90,7 @@ class rev_disponible(YearlyVariable):
 
 
 class revdecm(YearlyVariable):
-    value_type = int
+    value_type = float
     entity = Menage
     label = "Revenu déclaré du ménage (imputé à partir de l'ERFS)"
 

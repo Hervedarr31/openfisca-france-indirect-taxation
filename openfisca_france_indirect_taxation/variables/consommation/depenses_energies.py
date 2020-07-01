@@ -264,28 +264,23 @@ class depenses_electricite_variables(YearlyVariable):
         depenses_electricite_tarif_fixe = menage('depenses_electricite_tarif_fixe', period)
         depenses_electricite_variables = depenses_electricite - depenses_electricite_tarif_fixe
         depenses_electricite_variables = max_(depenses_electricite_variables, 0)
-
         return depenses_electricite_variables
 
 
 class depenses_energies_logement(YearlyVariable):
     value_type = float
     entity = Menage
-    label = "Dépenses en électricité sans inclure dépenses jointes avec le gaz"
+    label = "Dépenses en énergies dans le logement"
 
     def formula(menage, period):
-        depenses_electricite = menage('depenses_electricite', period)
-        depenses_gaz_ville = menage('depenses_gaz_ville', period)
-        depenses_gaz_liquefie = menage('depenses_gaz_liquefie', period)
-        depenses_combustibles_liquides = menage('depenses_combustibles_liquides', period)
-        depenses_combustibles_solides = menage('depenses_combustibles_solides', period)
-        depenses_energie_thermique = menage('depenses_energie_thermique', period)
-        depenses_energies_logement = (
-            depenses_electricite + depenses_gaz_ville + depenses_gaz_liquefie + depenses_combustibles_liquides
-            + depenses_combustibles_solides + depenses_energie_thermique
+        return (
+            menage('depenses_combustibles_liquides', period)
+            + menage('depenses_combustibles_solides', period)
+            + menage('depenses_electricite', period)
+            + menage('depenses_energie_thermique', period)
+            + menage('depenses_gaz_liquefie', period)
+            + menage('depenses_gaz_ville', period)
             )
-
-        return depenses_energies_logement
 
 
 class depenses_energie_thermique(YearlyVariable):
@@ -294,9 +289,7 @@ class depenses_energie_thermique(YearlyVariable):
     label = "Dépenses en énergie thermique"
 
     def formula(menage, period):
-        depenses_energie_thermique = menage('poste_04_5_5_1_1', period)
-
-        return depenses_energie_thermique
+        return menage('poste_04_5_5_1_1', period)
 
 
 class depenses_energies_totales(YearlyVariable):

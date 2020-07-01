@@ -201,7 +201,8 @@ def dataframe_by_group(
                     values = [values_reference],
                     columns = [category],
                     difference = True,
-                    period = period)
+                    period = period
+                    )
                 ])
     else:
         if use_baseline:
@@ -212,7 +213,8 @@ def dataframe_by_group(
                         values = [values_reference],
                         columns = [category],
                         use_baseline = True,
-                        period = period)
+                        period = period
+                        )
                     ])
         else:
             for values_reform in variables:

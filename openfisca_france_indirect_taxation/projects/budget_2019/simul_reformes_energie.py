@@ -33,14 +33,16 @@ def simulate_reformes_energie(graph = True):
     inflation_kwargs = dict(inflator_by_variable = inflators_by_year[year])
 
     simulated_variables = [
-        'revenu_reforme_officielle_2019_in_2017',
         'cheques_energie',
         'rev_disp_loyerimput',
         'rev_disponible',
         'niveau_de_vie',
+        'pondmen',
+        # revenu_reforme_officielle_2019_in_2017
+        'total_taxes_energies',
         'tarifs_sociaux_electricite',
         'tarifs_sociaux_gaz',
-        'pondmen'
+        # + gains_tva_total_energies
         ]
 
     baseline_tax_benefit_system = FranceIndirectTaxationTaxBenefitSystem()
@@ -57,7 +59,12 @@ def simulate_reformes_energie(graph = True):
     df_reforme = survey_scenario.create_data_frame_by_entity(simulated_variables, period = year)['menage']
 
     # Résultats agrégés par déciles de niveau de vie
-    df = dataframe_by_group(survey_scenario, category = 'niveau_vie_decile', variables = simulated_variables)
+    df = dataframe_by_group(
+        survey_scenario,
+        category = 'niveau_vie_decile',
+        variables = simulated_variables,
+        difference = True,
+        )
 
     # Simulation des effets de différentes réformes
 
@@ -66,10 +73,18 @@ def simulate_reformes_energie(graph = True):
     # total_taxes_energies_officielle_2019_in_2017 - total_taxes_energies
     # + gains_tva_total_energies + tarifs_sociaux_electricite + tarifs_sociaux_gaz
 
+    df['revenu_reforme_officielle_2019_in_2017'] = (
+        df.total_taxes_energies
+        + df.tarifs_sociaux_electricite
+        + df.tarifs_sociaux_gaz
+        # + gains_tva_total_energies
+        )
+
     df['cout_reforme_pures_taxes'] = (
         df['revenu_reforme_officielle_2019_in_2017']
         - df['tarifs_sociaux_electricite'] - df['tarifs_sociaux_gaz']
         ) / df['rev_disponible']
+
     df['cout_passage_tarifs_sociaux_cheque_energie_majore_et_etendu'] = (
         df['cheques_energie']
         - df['tarifs_sociaux_electricite'] - df['tarifs_sociaux_gaz']
@@ -85,7 +100,7 @@ def simulate_reformes_energie(graph = True):
     log.info("Coût total de la réforme : {} milliards d'euros".format(
         df['cout_total_reforme'].mean() * df_reforme['pondmen'].sum() / 1e9)
         )
-    return df
+    return df, survey_scenario
 
 
 if __name__ == "__main__":

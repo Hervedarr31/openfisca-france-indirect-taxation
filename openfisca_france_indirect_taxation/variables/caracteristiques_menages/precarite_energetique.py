@@ -4,6 +4,7 @@
 import numpy as np
 
 from openfisca_france_indirect_taxation.variables.base import *  # noqa analysis:ignore
+from openfisca_france_indirect_taxation.variables.consommation.depenses_energies import TypesContratGaz
 
 
 class cmu(YearlyVariable):
@@ -13,7 +14,7 @@ class cmu(YearlyVariable):
 
 
 class brde_m2_depenses_tot(YearlyVariable):
-    value_type = str
+    value_type = float
     entity = Menage
     label = "bas revenu (depenses tot )dépenses élevées (énergies logement)"
 
@@ -59,7 +60,7 @@ class brde_m2_rev_disponible(YearlyVariable):
 
 
 class brde_transports_depenses_tot(YearlyVariable):
-    value_type = str
+    value_type = float
     entity = Menage
     label = "bas revenu (depenses tot) dépenses élevées (en carburants)"
 
@@ -81,7 +82,7 @@ class brde_transports_depenses_tot(YearlyVariable):
 
 
 class brde_transports_rev_disponible(YearlyVariable):
-    value_type = str
+    value_type = float
     entity = Menage
     label = "bas revenu (revenu disponible) dépenses élevées (en carburants)"
 
@@ -105,7 +106,7 @@ class brde_transports_rev_disponible(YearlyVariable):
 # critère basé sur les barèmes d'éligibilité à la CMU-C en utilisant le revenu fiscal.
 # Le revenu pris en compte est normalement différent mais le nombre de ménages bénéficiaires est le même.
 class eligibilite_tarifs_sociaux_energies(YearlyVariable):
-    value_type = str
+    value_type = float
     entity = Menage
     label = "Le ménage est éligible aux tarifs sociaux de l'énergie"
 
@@ -259,7 +260,7 @@ class precarite_transports_rev_disponible(YearlyVariable):
 
 
 class tarifs_sociaux_electricite(YearlyVariable):
-    value_type = str
+    value_type = float
     entity = Menage
     label = "Montant perçus en tarifs sociaux sur l'électricité (TPN)"
 
@@ -289,27 +290,20 @@ class tarifs_sociaux_electricite(YearlyVariable):
 
 
 class tarifs_sociaux_gaz(YearlyVariable):
-    value_type = str
+    value_type = float
     entity = Menage
-    label = "Montant perçus en tarifs sociaux sur l'électricité (TSS)"
+    label = "Montant perçus en tarifs sociaux sur le gaz"
 
     def formula(menage, period, parameters):
-        depenses_gaz_prix_unitaire = menage('depenses_gaz_prix_unitaire', period)
-        prix_unitaire_base = \
-            parameters(period.start).tarifs_energie.tarifs_reglementes_gdf.prix_unitaire_gdf_ttc.prix_kwh_base_ttc
-        prix_unitaire_b0 = \
-            parameters(period.start).tarifs_energie.tarifs_reglementes_gdf.prix_unitaire_gdf_ttc.prix_kwh_b0_ttc
-        prix_unitaire_b1 = \
-            parameters(period.start).tarifs_energie.tarifs_reglementes_gdf.prix_unitaire_gdf_ttc.prix_kwh_b1_ttc
-
+        depenses_gaz_contrat = menage('depenses_gaz_contrat', period)
         eligible = menage('eligibilite_tarifs_sociaux_energies', period)
         uc = menage('ocde10', period)
         uc_1 = 1 * (uc == 1)
         uc_1_2 = 1 * (uc > 1) * (uc < 2)
-        uc_2 = 1 * ((uc == 2) + (uc > 2))
-        base = 1 * (depenses_gaz_prix_unitaire == prix_unitaire_base)
-        b0 = 1 * (depenses_gaz_prix_unitaire == prix_unitaire_b0)
-        b1 = 1 * (depenses_gaz_prix_unitaire == prix_unitaire_b1)
+        uc_2 = 1 * (uc >= 2)
+        base = 1 * (depenses_gaz_contrat == TypesContratGaz.base)
+        b0 = 1 * (depenses_gaz_contrat == TypesContratGaz.b0)
+        b1 = 1 * (depenses_gaz_contrat == TypesContratGaz.b1)
         tarifs_sociaux = eligible * (
             base * (uc_1 * 23 + uc_1_2 * 30 + uc_2 * 38)
             + b0 * (uc_1 * 72 + uc_1_2 * 95 + uc_2 * 117)
@@ -317,10 +311,7 @@ class tarifs_sociaux_gaz(YearlyVariable):
             )
 
         depenses_gaz_ville = menage('depenses_gaz_ville', period)
-        tarifs_sociaux = (
-            tarifs_sociaux * (tarifs_sociaux < depenses_gaz_ville)
-            + depenses_gaz_ville * (tarifs_sociaux > depenses_gaz_ville)
-            ) * eligible
+        tarifs_sociaux = eligible * min_(tarifs_sociaux, depenses_gaz_ville)
 
         return tarifs_sociaux
 

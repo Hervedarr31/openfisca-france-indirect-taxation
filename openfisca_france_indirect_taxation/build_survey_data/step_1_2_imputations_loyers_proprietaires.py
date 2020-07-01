@@ -123,12 +123,6 @@ def build_imputation_loyers_proprietaires(temporary_store = None, year = None):
 
         kept_variables = ['ident_men', 'rev801']
         loyers_imputes = loyers_imputes[kept_variables].copy()
-        # except KeyError as e:
-        #     log.debug("Variables that are not found: {}".format(
-        #         set(kept_variables).difference(set(loyers_imputes.columns))
-        #         ))
-        #     log.debug("loyers_imputes columns are: {}".format(loyers_imputes.columns))
-        #     raise (e)
 
         loyers_imputes.rename(
             columns = {'rev801': 'poste_04_2_1'},

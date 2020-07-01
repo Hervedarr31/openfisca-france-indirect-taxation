@@ -170,22 +170,20 @@ class quantites_essence(YearlyVariable):
         return quantites_essence
 
 
-class quantites_gaz_final(YearlyVariable):
+class quantites_gaz(YearlyVariable):
     value_type = float
     entity = Menage
     label = "Quantité de gaz (en kWh) consommée par les ménages s'ils ont souscrit au meilleur contrat"
 
     def formula(menage, period):
-        quantites_gaz_contrat_optimal = menage('quantites_gaz_contrat_optimal', period)
+        quantites_gaz_contrat = menage('quantites_gaz_contrat', period)
         depenses_gaz_prix_unitaire = menage('depenses_gaz_prix_unitaire', period)
         tarifs_sociaux_gaz = menage('tarifs_sociaux_gaz', period)
-
-        # Ceux qui ne consomment pas de gaz ayant depenses_gaz_prix_unitaire = 0,
-        # on remplace 0 par 1 pour éviter de diviser par zéro
-        depenses_gaz_prix_unitaire = depenses_gaz_prix_unitaire + 1 * (depenses_gaz_prix_unitaire == 0)
-        quantites_gaz_finale = quantites_gaz_contrat_optimal + (tarifs_sociaux_gaz / depenses_gaz_prix_unitaire * (depenses_gaz_prix_unitaire != 0))
-
-        return quantites_gaz_finale
+        return where(
+            depenses_gaz_prix_unitaire != 0,
+            quantites_gaz_contrat + (tarifs_sociaux_gaz / depenses_gaz_prix_unitaire),
+            0,
+            )
 
 
 class quantites_electricite_selon_compteur(YearlyVariable):
@@ -284,7 +282,7 @@ class quantites_super_plombe(YearlyVariable):
         return quantite_super_plombe
 
 
-class quantites_gaz(YearlyVariable):
+class quantites_gaz_contrat(YearlyVariable):
     value_type = float
     entity = Menage
     label = "Quantité de gaz (en kWh) consommée par les ménages selon leur contrat"
