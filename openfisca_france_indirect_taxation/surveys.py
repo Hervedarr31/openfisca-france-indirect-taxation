@@ -37,13 +37,6 @@ class SurveyScenario(AbstractSurveyScenario):
 
             tax_benefit_system = reform(baseline_tax_benefit_system)
 
-        if calibration_kwargs is not None:
-            assert set(calibration_kwargs.keys()).issubset(set(
-                ['target_margins_by_variable', 'parameters', 'total_population']))
-
-        if inflation_kwargs is not None:
-            assert set(inflation_kwargs.keys()).issubset(set(['inflator_by_variable', 'target_by_variable']))
-
         assert data_year is None or input_data_frame is None
 
         if input_data_frame is None:
@@ -64,18 +57,18 @@ class SurveyScenario(AbstractSurveyScenario):
             )
         survey_scenario.used_as_input_variables = set(input_data_frame.columns).intersection(
             set(tax_benefit_system.variables.keys()))
+
         survey_scenario.year = year
         survey_scenario.data_year = data_year
         data = dict(input_data_frame = input_data_frame)
 
-        survey_scenario.init_from_data(data = data)
-
-        if calibration_kwargs:
-            survey_scenario.calibrate(**calibration_kwargs)
-
         if inflation_kwargs:
-            log.debug('inflating for year = {} using {}'.format(year, inflation_kwargs))
-            survey_scenario.inflate(period = year, **inflation_kwargs)
+            inflation_kwargs['period'] = year
+        survey_scenario.init_from_data(
+            calibration_kwargs = calibration_kwargs,
+            data = data,
+            inflation_kwargs = inflation_kwargs,
+            )
 
         survey_scenario.initialize_weights()
         assert survey_scenario.simulation is not None

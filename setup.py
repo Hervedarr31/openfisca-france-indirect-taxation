@@ -46,6 +46,7 @@ setup(
             'ruamel.yaml',
             'seaborn',
             'tables',
+            'xlrd',
             ],
         ),
     include_package_data = True,  # Will read MANIFEST.in
@@ -53,7 +54,7 @@ setup(
         "numpy >= 1.11, <= 1.17",
         'Babel >= 0.9.4',
         'OpenFisca-Core >= 0.5.4',
-        'OpenFisca-Survey-Manager >= 0.37.0,<1.0',
+        'OpenFisca-Survey-Manager >= 0.39.1,<1.0',
         'python-slugify',
         'PyYAML >= 3.10',
         "pandas",  # <= 0.24.2",

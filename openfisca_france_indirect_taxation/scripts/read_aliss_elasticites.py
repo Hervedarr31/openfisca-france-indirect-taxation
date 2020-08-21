@@ -24,7 +24,7 @@ tables = [
         age = None,
         revenus = None,
         skiprows = 4,
-        sheetname = 'B.3',
+        sheet_name = 'B.3',
         parse_cols = "C:T",
         name = 'Food Expenditure Elasticities'
         ),
@@ -32,7 +32,7 @@ tables = [
         age = None,
         revenus = None,
         skiprows = 6,
-        sheetname = 'B.4',
+        sheet_name = 'B.4',
         parse_cols = "B:Y",
         name = 'Compensated Own-Price and Cross-Price Elasticities -- Full sample'
         ),
@@ -40,7 +40,7 @@ tables = [
         age = 0,
         revenus = 3,
         skiprows = 5,
-        sheetname = 'B5',
+        sheet_name = 'B5',
         parse_cols = "B:Y",
         name = 'Compensated Own-Price and Cross-Price Elasticities -- Well off and less than 30 years old'
         ),
@@ -48,7 +48,7 @@ tables = [
         age = 1,
         revenus = 3,
         skiprows = 4,
-        sheetname = 'B6',
+        sheet_name = 'B6',
         parse_cols = "C:Z",
         name = 'Compensated Own-Price and Cross-Price Elasticities -- Well off and aged between 30 and 45'
         ),
@@ -56,7 +56,7 @@ tables = [
         age = 2,
         revenus = 3,
         skiprows = 5,
-        sheetname = 'B7',
+        sheet_name = 'B7',
         parse_cols = "B:Y",
         name = 'Compensated Own-Price and Cross-Price Elasticities -- Well off and aged between 45 and 60'
         ),
@@ -64,7 +64,7 @@ tables = [
         age = 3,
         revenus = 3,
         skiprows = 4,
-        sheetname = 'B8',
+        sheet_name = 'B8',
         parse_cols = "C:Z",
         name = 'Compensated Own-Price and Cross-Price Elasticities -- Well off and more than 60'
         ),
@@ -72,7 +72,7 @@ tables = [
         age = 0,
         revenus = 2,
         skiprows = 5,
-        sheetname = 'B9',
+        sheet_name = 'B9',
         parse_cols = "C:Z",
         name = 'Compensated Own-Price and Cross-Price Elasticities -- Upper average and less than 30 years old'
         ),
@@ -80,7 +80,7 @@ tables = [
         age = 1,
         revenus = 2,
         skiprows = 5,
-        sheetname = 'B10',
+        sheet_name = 'B10',
         parse_cols = "C:Z",
         name = 'Compensated Own-Price and Cross-Price Elasticities -- Upper average and aged between 30 and 45'
         ),
@@ -88,7 +88,7 @@ tables = [
         age = 2,
         revenus = 2,
         skiprows = 4,
-        sheetname = 'B11',
+        sheet_name = 'B11',
         parse_cols = "C:Z",
         name = 'Compensated Own-Price and Cross-Price Elasticities -- Upper average and aged between 45 and 60'
         ),
@@ -96,7 +96,7 @@ tables = [
         age = 3,
         revenus = 2,
         skiprows = 4,
-        sheetname = 'B12',
+        sheet_name = 'B12',
         parse_cols = "C:Z",
         name = 'Compensated Own-Price and Cross-Price Elasticities -- Upper average and aged more than 60'
         ),
@@ -104,7 +104,7 @@ tables = [
         age = 0,
         revenus = 1,
         skiprows = 4,
-        sheetname = 'B13',
+        sheet_name = 'B13',
         parse_cols = "C:Z",
         name = 'Compensated Own-Price and Cross-Price Elasticities -- Lower average and less than 30 years old'
         ),
@@ -112,7 +112,7 @@ tables = [
         age = 1,
         revenus = 1,
         skiprows = 4,
-        sheetname = 'B14',
+        sheet_name = 'B14',
         parse_cols = "C:Z",
         name = 'Compensated Own-Price and Cross-Price Elasticities -- Lower average and aged between 30 and 45'
         ),
@@ -120,7 +120,7 @@ tables = [
         age = 2,
         revenus = 1,
         skiprows = 4,
-        sheetname = 'B15',
+        sheet_name = 'B15',
         parse_cols = "C:Z",
         name = 'Compensated Own-Price and Cross-Price Elasticities -- Lower average and aged between 45 and 60'
         ),
@@ -128,7 +128,7 @@ tables = [
         age = 3,
         revenus = 1,
         skiprows = 4,
-        sheetname = 'B16',
+        sheet_name = 'B16',
         parse_cols = "C:Z",
         name = 'Compensated Own-Price and Cross-Price Elasticities -- Lower average and aged more than 60'
         ),
@@ -136,7 +136,7 @@ tables = [
         age = 0,
         revenus = 0,
         skiprows = 4,
-        sheetname = 'B17',
+        sheet_name = 'B17',
         parse_cols = "C:Z",
         name = 'Compensated Own-Price and Cross-Price Elasticities -- Modest and less than 30 years old'
         ),
@@ -144,7 +144,7 @@ tables = [
         age = 1,
         revenus = 0,
         skiprows = 4,
-        sheetname = 'B18',
+        sheet_name = 'B18',
         parse_cols = "C:Z",
         name = 'Compensated Own-Price and Cross-Price Elasticities -- Modest and aged between 30 and 45'
         ),
@@ -152,7 +152,7 @@ tables = [
         age = 2,
         revenus = 0,
         skiprows = 4,
-        sheetname = 'B19',
+        sheet_name = 'B19',
         parse_cols = "C:Z",
         name = 'Compensated Own-Price and Cross-Price Elasticities -- Modest and aged between 45 and 60'
         ),
@@ -160,7 +160,7 @@ tables = [
         age = 3,
         revenus = 0,
         skiprows = 4,
-        sheetname = 'B20',
+        sheet_name = 'B20',
         parse_cols = "C:Z",
         name = 'Compensated Own-Price and Cross-Price Elasticities -- Modest and aged more than 60'
         ),

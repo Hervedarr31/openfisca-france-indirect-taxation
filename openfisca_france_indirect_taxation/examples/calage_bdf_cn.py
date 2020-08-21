@@ -128,7 +128,7 @@ def get_cn_data_frames(year_data = None, year_calage = None):
         'Parametres fiscalite indirecte.xls'
         )
 
-    masses_cn_data_frame = pandas.read_excel(parametres_fiscalite_file_path, sheetname = "consommation_CN")
+    masses_cn_data_frame = pandas.read_excel(parametres_fiscalite_file_path, sheet_name = "consommation_CN")
     if year_data != year_calage:
         masses_cn_12postes_data_frame = masses_cn_data_frame.loc[:, ['Code', year_data, year_calage]]
     else:
@@ -196,7 +196,7 @@ def build_revenus_cales(revenus, year_calage, year_data):
         'Parametres fiscalite indirecte.xls',
         )
 
-    masses_cn_revenus_data_frame = pandas.read_excel(parametres_fiscalite_file_path, sheetname = "revenus_CN")
+    masses_cn_revenus_data_frame = pandas.read_excel(parametres_fiscalite_file_path, sheet_name = "revenus_CN")
 
     masses_cn_revenus_data_frame.rename(
         columns = {
@@ -266,7 +266,7 @@ def build_df_calee_on_ticpe(dataframe, year_calage = None, year_data = None):
         'Parametres fiscalite indirecte.xls'
         )
 
-    masses_cn_data_frame = pandas.read_excel(parametres_fiscalite_file_path, sheetname = "consommation_CN")
+    masses_cn_data_frame = pandas.read_excel(parametres_fiscalite_file_path, sheet_name = "consommation_CN")
     if year_data != year_calage:
         masses_cn_12postes_data_frame = masses_cn_data_frame.loc[:, ['Code', year_data, year_calage]]
     else:
