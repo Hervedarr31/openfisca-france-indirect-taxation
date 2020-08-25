@@ -372,9 +372,9 @@ class depenses_gaz_liquefie(YearlyVariable):
 
 class TypesContratGaz(Enum):
     __order__ = 'base b0 b1 b2i'
-    base = "base",
-    b0 = "b0",
-    b1 = "b1",
+    base = "base"
+    b0 = "b0"
+    b1 = "b1"
     b2i = "b2i"
 
 
@@ -421,10 +421,10 @@ class depenses_gaz_contrat(YearlyVariable):
         prix_unitaire_gaz = tarifs_reglementes_gdf.prix_unitaire_gdf_ttc.prix_kwh_b2i_ttc
         quantite_b2i = depenses_gaz_variables / prix_unitaire_gaz
 
-        quantite_optimale_base_b0 = numpy.maximum(quantite_base, quantite_b0)
-        quantite_optimale_base_b1 = numpy.maximum(quantite_optimale_base_b0, quantite_b1)
-        quantite_optimale_base_b2i = numpy.maximum(quantite_optimale_base_b1, quantite_b2i)
-        quantite_optimale = numpy.maximum(quantite_optimale_base_b2i, 0)
+        quantite_optimale_base_b0 = max_(quantite_base, quantite_b0)
+        quantite_optimale_base_b1 = max_(quantite_optimale_base_b0, quantite_b1)
+        quantite_optimale_base_b2i = max_(quantite_optimale_base_b1, quantite_b2i)
+        quantite_optimale = max_(quantite_optimale_base_b2i, 0)
 
         return select(
             [
@@ -511,7 +511,7 @@ class depenses_gaz_variables(YearlyVariable):
         tarif_fixe = menage('depenses_gaz_tarif_fixe', period)
 
         depenses_gaz_variables = depenses_gaz - tarif_fixe
-        depenses_gaz_variables = numpy.maximum(depenses_gaz_variables, 0)
+        depenses_gaz_variables = max_(depenses_gaz_variables, 0)
         return depenses_gaz_variables
 
 

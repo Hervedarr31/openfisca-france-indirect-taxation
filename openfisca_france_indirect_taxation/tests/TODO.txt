@@ -1,17 +1,5 @@
 # New issues:
 
-## Réactions comportementales
-  - Intégrer de façon homogène la(les) réaction(s) comportemenatle(s) comme une(des)
-   extension(s).
-  - Normaliser dans l'arborescence des paramètres les surcoûts de prix.
-
-
-# test_aliss_survey_scenario.py
-  - le test ne passe pas sur msika/portable
-  - vérifier à l'IPP
-  - skipped
-
-
 
 Etapes:
   - Lister les résultats que l'on veut reproduire (vérifier avec Thomas):
@@ -26,4 +14,75 @@ On risque de devoir régler les problèmes suivants:
   - Intégrer de façon homogène la(les) réaction(s) comportemenatle(s) comme une(des)
    extension(s).
   - Normaliser dans l'arborescence des paramètres les surcoûts de prix.
+
+
+Réforme énergie:
+
+# ticpe
+combustibles_liquides_ticpe_officielle_2019_in_2017  depenses_combustibles_liquides_officielle_2019_in_2017 + eleasticité + réforme
+
+diesel_ticpe_officielle_2019_in_2017  -> form depenses_diesel_corrigees_officielle_2019_in_2017
+essence_ticpe_officielle_2019_in_2017 -> sum of (sp_e10_ticpe_officielle_2019_in_2017, sp95_ticpe_officielle_2019_in_2017, sp98_ticpe_officielle_2019_in_2017) REMOVED
+
+sp_e10_ticpe_officielle_2019_in_2017  from depenses_essence_corrigees_officielle_2019_in_2017 + part sp_e10
+sp95_ticpe_officielle_2019_in_2017   from depenses_essence_corrigees_officielle_2019_in_2017 + part sp95
+sp98_ticpe_officielle_2019_in_2017   from depenses_essence_corrigees_officielle_2019_in_2017 + part sp98
+super_plombe_ticpe_officielle_2019_in_2017 from depenses_essence_corrigees_officielle_2019_in_2017 + part super plombe
+
+
+ticpe_totale_officielle_2019_in_2017 -> sum of (diesel_ticpe_officielle_2019_in_2017 essence_ticpe_officielle_2019_in_2017)
+total_taxes_energies_officielle_2019_in_2017 -> sum of (diesel_ticpe_officielle_2019_in_2017
+                                                        essence_ticpe_officielle_2019_in_2017
+                                                        combustibles_liquides_ticpe_officielle_2019_in_2017
+                                                        taxe_gaz_ville_officielle_2019_in_2017
+                                                        )  MODFIED: TODO SHOULD INCLUDE REFORME
+
+# depenses_energies
+depenses_carburants_corrigees_officielle_2019_in_2017 sum of depenses_diesel_corrigees_officielle_2019_in_2017 et depenses_essence_corrigees_officielle_2019_in_2017
+-> TODO create counterpart in general tbs model
+
+depenses_combustibles_liquides_officielle_2019_in_2017 depenses_combustibles_liquides + elasticité
+depenses_diesel_corrigees_officielle_2019_in_2017 depenses_diesel + elasticité
+depenses_energies_logement_officielle_2019_in_2017 sum of(depenses_electricite
+                                                          tarifs_sociaux_electricite
+                                                          depenses_gaz_ville_ajustees
+                                                          depenses_gaz_liquefie
+                                                          depenses_combustibles_liquides_ajustees
+                                                          depenses_combustibles_solides
+                                                          depenses_energie_thermique
+                                                          )
+depenses_essence_corrigees_officielle_2019_in_2017  depenses_essence + elastiité
+depenses_gaz_ville_officielle_2019_in_2017 depnses_gaz_variable + réforme + élasticité
+
+# quantites_energeies
+quantites_gaz_final_officielle_2019_in_2017 depnses_gaz_ + réfome
+
+
+# Pas spécifique à réintégrer mais avec réforme de la prise en compte du gaz
+taxe_gaz_ville_officielle_2019_in_2017
+
+
+# Spécifique
+gains_tva_carburants_officielle_2019_in_2017
+gains_tva_combustibles_liquides_officielle_2019_in_2017
+gains_tva_gaz_ville_officielle_2019_in_2017
+gains_tva_total_energies_officielle_2019_in_2017
+revenu_reforme_officielle_2019_in_2017
+
+
+TODO gaz:
+  - [x] écrire tests unitaires pour valider le refactoring
+  - [x] refactorer abonnement optimal
+    - variable contrat optimal à partir en maximisante la quantité pour un poste de dépenses donné
+    - prix unitaires à paritr du contrat
+    - dépenses à partir du poste éventuellment ajustée si réforme sans changement de contrat
+    - quantités à partir des dépenses éventuellement ajustée et du contrat
+
+  - Quid des tarifs sociaux gaz
+    - trouver info tarif sociaux du gaz
+    - gérer tarif sociaux
+
+
+Comprends pas différence pix_unitaire_gdf_par_zone_ht et pix_unitaire_gdf_ttc avec le premier partriquement x100 le deuxième
+
 

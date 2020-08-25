@@ -107,15 +107,16 @@ class depenses_diesel(YearlyVariable):
 class depenses_gaz_ville(YearlyVariable):
     value_type = float
     entity = Menage
-    label = "Dépenses en gaz après réaction à la réforme - taxe carbone"
+    label = "Dépenses en gaz après éventuelle réponse comportementale"
 
     def formula(menage, period, parameters):
         depenses_gaz_variables = menage('depenses_gaz_variables', period)
         depenses_gaz_prix_unitaire = menage('depenses_gaz_prix_unitaire', period)
         depenses_gaz_contrat = menage('depenses_gaz_contrat', period)
+
         try:
             prix_unitaire_gdf_ttc = parameters(period.start).tarifs_energie.tarifs_reglementes_gdf.prix_unitaire_gdf_ttc
-            gaz_prix_unitaire_reference = select(
+            delta_prix_unitaire_gdf_kwh_ttc = select(
                 [
                     depenses_gaz_contrat == TypesContratGaz.base,
                     depenses_gaz_contrat == TypesContratGaz.b0,
@@ -133,7 +134,6 @@ class depenses_gaz_ville(YearlyVariable):
             assert prix_unitaire_gdf_ttc.prix_kwh_b0_ttc_reference is not None
             assert prix_unitaire_gdf_ttc.prix_kwh_b1_ttc_reference is not None
             assert prix_unitaire_gdf_ttc.prix_kwh_b2i_ttc_reference is not None
-            delta_prix_unitaire_gdf_kwh_ttc = depenses_gaz_prix_unitaire - gaz_prix_unitaire_reference
 
         except ParameterNotFound:
             delta_prix_unitaire_gdf_kwh_ttc = None
@@ -145,11 +145,11 @@ class depenses_gaz_ville(YearlyVariable):
             depenses_gaz_ajustees_variables = \
                 depenses_gaz_variables * (1 + (1 + gaz_elasticite_prix) * delta_prix_unitaire_gdf_kwh_ttc / depenses_gaz_prix_unitaire)
 
-            depenses_gaz_ajustees = depenses_gaz_ajustees_variables + depenses_gaz_tarif_fixe
+            depenses_gaz_ajustees = depenses_gaz_ajustees_variables
 
             depenses_gaz_ajustees[numpy.isnan(depenses_gaz_ajustees)] = 0
             depenses_gaz_ajustees[numpy.isinf(depenses_gaz_ajustees)] = 0
-            return depenses_gaz_ajustees
+            return depenses_gaz_ajustees + depenses_gaz_tarif_fixe
 
         else:
             return depenses_gaz_variables + depenses_gaz_tarif_fixe

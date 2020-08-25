@@ -11,30 +11,30 @@ from openfisca_france_indirect_taxation.reforms.reforme_energie_test import buil
 
 
 def modify_parameters(parameters):
-    period = '2016'
+    period = '2017'
     parameters = build_prix_carburants_reference(parameters)
 
     reference_value = parameters(period).prix_carburants.diesel_ttc_reference
     parameters.prix_carburants.diesel_ttc.update(
-        period = period,
+        start = period,
         value = reference_value + 1 * 2.6 + 266 * (0.0446 - 0.0305)  # 266 = valeur du contenu carbone du diesel (source : Ademe)
         )
 
     reference_value = parameters(period).prix_carburants.super_95_ttc_reference
     parameters.prix_carburants.super_95_ttc.update(
-        period = period,
+        start = period,
         value = reference_value + 242 * (0.0446 - 0.0305)  # 242 = valeur du contenu carbone du diesel (source : Ademe)
         )
 
     reference_value = \
         parameters(period).tarifs_energie.prix_fioul_domestique.prix_annuel_moyen_fioul_domestique_ttc_livraisons_2000_4999_litres_en_euro_par_litre_reference
     parameters.tarifs_energie.prix_fioul_domestique.prix_annuel_moyen_fioul_domestique_ttc_livraisons_2000_4999_litres_en_euro_par_litre.update(
-        period = period,
+        start = period,
         value = reference_value + 3.24 * (0.0446 - 0.0305)  # (en euros par litre)
         )
 
     parameters.imposition_indirecte.produits_energetiques.ticpe.gazole_fioul_domestique_hectolitre.update(
-        period = period,
+        start = period,
         value = (
             parameters(period).imposition_indirecte.produits_energetiques.ticpe.gazole_fioul_domestique_hectolitre
             + 100 * 3.24 * (0.0446 - 0.0305)  # (en euros par litre)
@@ -51,8 +51,8 @@ def modify_parameters(parameters):
             ]:
         name = node.name.split(".")[-1:][0]
         reference_value = prix_unitaire_gdf_ttc.children[name + '_reference'](period)
-        node.update(
-            period = period,
+        prix_unitaire_gdf_ttc.children[name].update(
+            start = period,
             value = reference_value + 0.241 * (0.0446 - 0.0305)  # (en euros par kWh)
             )
 
@@ -175,17 +175,16 @@ class officielle_2019_in_2017(Reform):
             assert prix_unitaire_gdf_ttc.prix_kwh_b0_ttc_reference is not None
             assert prix_unitaire_gdf_ttc.prix_kwh_b1_ttc_reference is not None
             assert prix_unitaire_gdf_ttc.prix_kwh_b2i_ttc_reference is not None
-
             depenses_gaz_tarif_fixe = menage('depenses_gaz_tarif_fixe', period)
 
             gaz_elasticite_prix = menage('elas_price_2_2', period)
             depenses_gaz_ajustees_variables = \
                 depenses_gaz_variables * (1 + (1 + gaz_elasticite_prix) * delta_prix_unitaire_gdf_kwh_ttc / depenses_gaz_prix_unitaire)
 
-            depenses_gaz_ajustees = depenses_gaz_ajustees_variables + depenses_gaz_tarif_fixe
+            depenses_gaz_ajustees = depenses_gaz_ajustees_variables
             depenses_gaz_ajustees[numpy.isnan(depenses_gaz_ajustees)] = 0
             depenses_gaz_ajustees[numpy.isinf(depenses_gaz_ajustees)] = 0
-            return depenses_gaz_ajustees
+            return depenses_gaz_ajustees  + depenses_gaz_tarif_fixe
 
 
     # TODO: doit être inclus dans la différence de TVA
