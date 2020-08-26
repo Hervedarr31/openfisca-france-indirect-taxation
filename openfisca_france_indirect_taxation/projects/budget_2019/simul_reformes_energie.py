@@ -42,7 +42,8 @@ def simulate_reformes_energie(graph = True):
         'total_taxes_energies',
         'tarifs_sociaux_electricite',
         'tarifs_sociaux_gaz',
-        # + gains_tva_total_energies
+        # + gains_tva_total_energies,
+        'tva_total',
         ]
 
     baseline_tax_benefit_system = FranceIndirectTaxationTaxBenefitSystem()
@@ -77,6 +78,7 @@ def simulate_reformes_energie(graph = True):
         df.total_taxes_energies
         + df.tarifs_sociaux_electricite
         + df.tarifs_sociaux_gaz
+        + df.tva_total
         # + gains_tva_total_energies
         )
 

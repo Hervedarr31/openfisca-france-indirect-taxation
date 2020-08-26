@@ -159,12 +159,14 @@ class officielle_2019_in_2017(Reform):
             prix_unitaire_gdf_ttc = parameters(period.start).tarifs_energie.tarifs_reglementes_gdf.prix_unitaire_gdf_ttc
             delta_prix_unitaire_gdf_kwh_ttc = select(
                 [
+                    depenses_gaz_contrat == TypesContratGaz.aucun,
                     depenses_gaz_contrat == TypesContratGaz.base,
                     depenses_gaz_contrat == TypesContratGaz.b0,
                     depenses_gaz_contrat == TypesContratGaz.b1,
                     depenses_gaz_contrat == TypesContratGaz.b2i,
                     ],
                 [
+                    0,
                     prix_unitaire_gdf_ttc.prix_kwh_base_ttc - prix_unitaire_gdf_ttc.prix_kwh_base_ttc_reference,
                     prix_unitaire_gdf_ttc.prix_kwh_b0_ttc - prix_unitaire_gdf_ttc.prix_kwh_b0_ttc_reference,
                     prix_unitaire_gdf_ttc.prix_kwh_b1_ttc - prix_unitaire_gdf_ttc.prix_kwh_b1_ttc_reference,
@@ -178,13 +180,17 @@ class officielle_2019_in_2017(Reform):
             depenses_gaz_tarif_fixe = menage('depenses_gaz_tarif_fixe', period)
 
             gaz_elasticite_prix = menage('elas_price_2_2', period)
-            depenses_gaz_ajustees_variables = \
-                depenses_gaz_variables * (1 + (1 + gaz_elasticite_prix) * delta_prix_unitaire_gdf_kwh_ttc / depenses_gaz_prix_unitaire)
-
-            depenses_gaz_ajustees = depenses_gaz_ajustees_variables
-            depenses_gaz_ajustees[numpy.isnan(depenses_gaz_ajustees)] = 0
-            depenses_gaz_ajustees[numpy.isinf(depenses_gaz_ajustees)] = 0
-            return depenses_gaz_ajustees  + depenses_gaz_tarif_fixe
+            depenses_gaz_variables_ajustees = select(
+                [
+                    depenses_gaz_contrat == TypesContratGaz.aucun,
+                    depenses_gaz_contrat != TypesContratGaz.aucun,
+                    ],
+                [
+                    0,
+                    depenses_gaz_variables * (1 + (1 + gaz_elasticite_prix) * delta_prix_unitaire_gdf_kwh_ttc / depenses_gaz_prix_unitaire),
+                    ]
+                )
+            return depenses_gaz_variables_ajustees + depenses_gaz_tarif_fixe
 
 
     # TODO: doit être inclus dans la différence de TVA
@@ -329,6 +335,7 @@ class officielle_2019_in_2017(Reform):
             combustibles_liquides_ticpe = menage('combustibles_liquides_ticpe', period)
             taxe_gaz_ville_additionnelle = menage('taxe_gaz_ville_additionnelle', period)
             return diesel_ticpe + essence_ticpe + combustibles_liquides_ticpe + taxe_gaz_ville_additionnelle
+
 
     def apply(self):
         self.neutralize_variable("tarifs_sociaux_gaz")

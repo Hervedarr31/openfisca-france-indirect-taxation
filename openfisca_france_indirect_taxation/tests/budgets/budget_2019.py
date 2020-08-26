@@ -37,8 +37,8 @@ def test_plf_2019_reforme_tabac(baseline_year):
 
 
 def test_plf_2019_reformes_energie():
-    df, survey_scenario = simulate_reformes_energie(graph = False)
-    df = df[results.columns].copy()
+    df_all, survey_scenario = simulate_reformes_energie(graph = False)
+    df = df_all[results.columns].copy()
     for variable in results.columns:
         # assert ((df['{}'.format(variable)] - results['{}'.format(variable)]) < 1).all()
 
@@ -52,4 +52,6 @@ def test_plf_2019_reformes_energie():
         except Exception as e:
             print(e)
             pass
+        print(df)
+        print(results)
         BIM

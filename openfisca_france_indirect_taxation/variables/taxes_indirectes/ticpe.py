@@ -233,7 +233,7 @@ class super_plombe_ticpe(Variable):
 class ticpe_totale(YearlyVariable):
     value_type = float
     entity = Menage
-    label = "Calcul du montant de la TICPE sur tous les carburants cumulés"
+    label = "Calcul du montant de la TICPE sur tous les carburants"
 
     def formula(menage, period):
         essence_ticpe = menage('essence_ticpe', period)
@@ -246,7 +246,7 @@ class ticpe_totale(YearlyVariable):
 class total_taxes_energies(YearlyVariable):
     value_type = float
     entity = Menage
-    label = "Calcul du montant de la TICPE sur tous les carburants cumulés"
+    label = "Calcul du montant de la TICPE sur tous les carburants et les combustibles"
 
     def formula(menage, period):
         essence_ticpe = menage('essence_ticpe', period)

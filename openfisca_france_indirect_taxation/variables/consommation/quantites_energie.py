@@ -292,12 +292,14 @@ class quantites_gaz_contrat(YearlyVariable):
         tarif_fixe_gdf_ttc = parameters(period.start).tarifs_energie.tarifs_reglementes_gdf.tarif_fixe_gdf_ttc
         tarif_fixe_gaz = select(
             [
+                depenses_gaz_contrat == TypesContratGaz.aucun,
                 depenses_gaz_contrat == TypesContratGaz.base,
                 depenses_gaz_contrat == TypesContratGaz.b0,
                 depenses_gaz_contrat == TypesContratGaz.b1,
                 depenses_gaz_contrat == TypesContratGaz.b2i,
                 ],
              [
+                0,
                 tarif_fixe_gdf_ttc.base_0_1000,
                 tarif_fixe_gdf_ttc.b0_1000_6000,
                 tarif_fixe_gdf_ttc.b1_6_30000,
@@ -309,18 +311,29 @@ class quantites_gaz_contrat(YearlyVariable):
         prix_unitaire_gdf_ttc = parameters(period.start).tarifs_energie.tarifs_reglementes_gdf.prix_unitaire_gdf_ttc
         prix_unitaire_gaz = select(
             [
+                depenses_gaz_contrat == TypesContratGaz.aucun,
                 depenses_gaz_contrat == TypesContratGaz.base,
                 depenses_gaz_contrat == TypesContratGaz.b0,
                 depenses_gaz_contrat == TypesContratGaz.b1,
                 depenses_gaz_contrat == TypesContratGaz.b2i,
                 ],
             [
+                0,
                 prix_unitaire_gdf_ttc.prix_kwh_base_ttc,
                 prix_unitaire_gdf_ttc.prix_kwh_b0_ttc,
                 prix_unitaire_gdf_ttc.prix_kwh_b1_ttc,
                 prix_unitaire_gdf_ttc.prix_kwh_b2i_ttc,
                 ]
             )
-        quantite_gaz = depenses_sans_part_fixe / prix_unitaire_gaz
+        quantite_gaz = select(
+            [
+                depenses_gaz_contrat == TypesContratGaz.aucun,
+                depenses_gaz_contrat != TypesContratGaz.aucun,
+                ],
+            [
+                0,
+                depenses_sans_part_fixe / prix_unitaire_gaz
+                ]
+            )
 
         return quantite_gaz
