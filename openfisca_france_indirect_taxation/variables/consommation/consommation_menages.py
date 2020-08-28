@@ -51,25 +51,6 @@ class depenses_ticpe(YearlyVariable):
         # This is equivalent to call directly poste_07_2_2_1_1
 
 
-class depenses_essence_recalculees(YearlyVariable):
-    value_type = float
-    entity = Menage
-    label = "Dépenses en essence recalculées à partir du prix ht"
-
-    def formula(menage, period, parameters):
-        taux_plein_tva = parameters(period.start).imposition_indirecte.tva.taux_de_tva.taux_normal
-        depenses_sp_e10_ht = menage('depenses_sp_e10_ht', period)
-        depenses_sp_95_ht = menage('depenses_sp_95_ht', period)
-        depenses_sp_98_ht = menage('depenses_sp_98_ht', period)
-        depenses_super_plombe_ht = menage('depenses_super_plombe_ht', period)
-        return (
-            depenses_sp_e10_ht
-            + depenses_sp_95_ht
-            + depenses_sp_98_ht
-            + depenses_super_plombe_ht
-            ) * (1 + taux_plein_tva)
-
-
 class depenses_tot(YearlyVariable):
     value_type = float
     entity = Menage

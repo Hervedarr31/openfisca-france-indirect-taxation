@@ -16,7 +16,7 @@ class cmu(YearlyVariable):
 class brde_m2_depenses_tot(YearlyVariable):
     value_type = float
     entity = Menage
-    label = "bas revenu (depenses tot )dépenses élevées (énergies logement)"
+    label = "bas revenu (depenses totales) dépenses élevées (énergies logement)"
 
     def formula(menage, period):
         depenses_tot = menage('depenses_tot', period)

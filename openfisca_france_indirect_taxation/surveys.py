@@ -98,7 +98,7 @@ class SurveyScenario(AbstractSurveyScenario):
                 #     tarifs_sociaux_gaz_variable.end is not None
                 #     and tarifs_sociaux_gaz_variable.end <= self.year
                 #     )
-                ):
+                    ):
 
                 tarifs_sociaux_gaz_value = self.baseline_simulation.calculate("tarifs_sociaux_gaz", period = period)
                 depenses_gaz_variables_value = self.baseline_simulation.calculate("depenses_gaz_variables", period = period)
@@ -109,7 +109,6 @@ class SurveyScenario(AbstractSurveyScenario):
                     )
 
         # TODO traiter les cas de la dispartion en réforme _et_ baseline des tarifs_sociaux
-
 
     def initialize_weights(self):
         self.weight_variable_by_entity = dict()

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import logging
 import numpy
 
@@ -301,7 +299,8 @@ class depenses_energies_totales(YearlyVariable):
         depenses_energies_logement = menage('depenses_energies_logement', period)
         depenses_carburants = menage('depenses_carburants', period)
         depenses_energies_totales = (
-            depenses_energies_logement + depenses_carburants
+            depenses_carburants
+            + depenses_energies_logement
             )
 
         return depenses_energies_totales
@@ -383,6 +382,7 @@ class poste_gaz_ville(YearlyVariable):
     value_type = float
     entity = Menage
     label = "Dépenses en gaz estimées des factures jointes électricité et gaz"
+
     def formula(menage, period):
         poste_gaz_seul = menage('poste_gaz_seul', period)
         depenses_gaz_factures_jointes = menage('depenses_gaz_factures_jointes', period)
@@ -443,7 +443,6 @@ class depenses_gaz_contrat(YearlyVariable):
                 TypesContratGaz.b2i,
                 ]
             )
-
 
 
 class depenses_gaz_prix_unitaire(YearlyVariable):

@@ -31,7 +31,6 @@ def test_inflators_energy():
         data_year = data_year
         )
     df_data_year = survey_scenario_data_year.create_data_frame_by_entity(simulated_variables, period = data_year)['menage']
-    print(sorted(inflation_kwargs['inflator_by_variable'].keys()))
 
     survey_scenario_year = SurveyScenario.create(
         inflation_kwargs = inflation_kwargs,

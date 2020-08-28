@@ -161,7 +161,6 @@ class depenses_gaz_ville(YearlyVariable):
             return depenses_gaz_variables + depenses_gaz_tarif_fixe
 
 
-
 class depenses_electricite_ajustees_taxe_carbone(YearlyVariable):
     value_type = float
     entity = Menage
