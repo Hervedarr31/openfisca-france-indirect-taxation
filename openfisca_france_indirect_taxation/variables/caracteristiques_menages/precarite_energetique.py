@@ -4,7 +4,7 @@
 import numpy as np
 
 from openfisca_france_indirect_taxation.variables.base import *  # noqa analysis:ignore
-from openfisca_france_indirect_taxation.variables.consommation.depenses_energies import TypesContratGaz
+from openfisca_france_indirect_taxation.variables.consommation.energie.logement import TypesContratGaz
 
 
 class cmu(YearlyVariable):

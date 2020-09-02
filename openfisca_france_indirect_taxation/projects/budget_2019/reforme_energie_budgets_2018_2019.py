@@ -1,12 +1,7 @@
-# -*- coding: utf-8 -*-
-
-import numpy
-
-from openfisca_core.parameters import ParameterNotFound
 from openfisca_core.reforms import Reform
 from openfisca_france_indirect_taxation.variables.base import *  # noqa analysis:ignore
 from openfisca_france_indirect_taxation import FranceIndirectTaxationTaxBenefitSystem
-from openfisca_france_indirect_taxation.variables.consommation.depenses_energies import TypesContratGaz
+from openfisca_france_indirect_taxation.variables.consommation.energie.logement import TypesContratGaz
 from openfisca_france_indirect_taxation.reforms.reforme_energie_test import build_prix_carburants_reference
 
 
@@ -53,7 +48,7 @@ def modify_parameters(parameters):
         reference_value = prix_unitaire_gdf_ttc.children[name + '_reference'](period)
         prix_unitaire_gdf_ttc.children[name].update(
             start = period,
-            value = reference_value + 0.241 * (0.0446 - 0.0305)  # (en euros par kWh)
+            value = reference_value + 0.241 * (0.0446 - 0.0305)  # (en euros par kWh)
             )
 
     parameters.prestations.add_child(  # Peut être ne lire que le fichier des paramètres et ne pas instancier le TBS
@@ -124,7 +119,6 @@ class officielle_2019_in_2017(Reform):
 
             return montant_combustibles_liquides_ticpe_ajuste
 
-
     class depenses_energies_logement(YearlyVariable):
         value_type = float
         entity = Menage
@@ -141,7 +135,6 @@ class officielle_2019_in_2017(Reform):
                 + menage('tarifs_sociaux_electricite', period)
                 )
 
-
     class depenses_gaz_ville(YearlyVariable):
         value_type = float
         entity = Menage
@@ -150,7 +143,7 @@ class officielle_2019_in_2017(Reform):
         def formula(menage, period, parameters):
             depenses_gaz_variables = menage('depenses_gaz_variables', period)
             # Avec la réforme ces tarifs disparaissent, de nouvelles consommations entrent dans les dépenses des ménages :
-            # tarifs_sociaux_gaz = menage('tarifs_sociaux_gaz', period)
+            # tarifs_sociaux_gaz = menage('tarifs_sociaux_gaz', period)
             # TODO comme ils diparaissent et que l'on veut les reverser dans depenses_gaz_variables il faut le faire
             # seulement pour la réforme dans l'initialisation du TBS (custom_initialize)
             # depenses_gaz_variables = depenses_gaz_variables + tarifs_sociaux_gaz
@@ -191,7 +184,6 @@ class officielle_2019_in_2017(Reform):
                     ]
                 )
             return depenses_gaz_variables_ajustees + depenses_gaz_tarif_fixe
-
 
     # TODO: doit être inclus dans la différence de TVA
     # class gains_tva_carburants_officielle_2019_in_2017(YearlyVariable):
@@ -271,25 +263,26 @@ class officielle_2019_in_2017(Reform):
                 )
             return gains_tva_gaz_ville
 
+    # class gains_tva_total_energies(YearlyVariable):
+
     # class gains_tva_total_energies_officielle_2019_in_2017(YearlyVariable):
     #     value_type = float
     #     entity = Menage
     #     label = "Recettes de la réforme en TVA sur toutes les énergies"
-
+    #
     #     def formula(menage, period):
     #         gains_carburants = menage('gains_tva_carburants_officielle_2019_in_2017', period)
     #         gains_combustibles_liquides = menage('gains_tva_combustibles_liquides_officielle_2019_in_2017', period)
     #         gains_gaz_ville = menage('gains_tva_gaz_ville_officielle_2019_in_2017', period)
-
+    #
     #         somme_gains = gains_carburants + gains_combustibles_liquides + gains_gaz_ville
     #         return somme_gains
-
-
+    #
     # class revenu_reforme_officielle_2019_in_2017(YearlyVariable):
     #     value_type = float
     #     entity = Menage
     #     label = "Revenu généré par la réforme officielle 2018 avant redistribution"
-
+    #
     #     def formula(menage, period):
     #         total_taxes_energies = menage('total_taxes_energies', period)
     #         total_taxes_energies_officielle_2019_in_2017 = \
@@ -297,14 +290,13 @@ class officielle_2019_in_2017(Reform):
     #         gains_tva_total_energies = menage('gains_tva_total_energies_officielle_2019_in_2017', period)
     #         tarifs_sociaux_electricite = menage('tarifs_sociaux_electricite', period)
     #         tarifs_sociaux_gaz = menage('tarifs_sociaux_gaz', period)
-
+    #
     #         revenu_reforme = (
     #             total_taxes_energies_officielle_2019_in_2017 - total_taxes_energies
     #             + gains_tva_total_energies + tarifs_sociaux_electricite + tarifs_sociaux_gaz
     #             )
-
+    #
     #         return revenu_reforme
-
 
     class taxe_gaz_ville_additionnelle(YearlyVariable):
         value_type = float
@@ -335,7 +327,6 @@ class officielle_2019_in_2017(Reform):
             combustibles_liquides_ticpe = menage('combustibles_liquides_ticpe', period)
             taxe_gaz_ville_additionnelle = menage('taxe_gaz_ville_additionnelle', period)
             return diesel_ticpe + essence_ticpe + combustibles_liquides_ticpe + taxe_gaz_ville_additionnelle
-
 
     def apply(self):
         self.neutralize_variable("tarifs_sociaux_gaz")

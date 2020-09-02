@@ -11,7 +11,7 @@ from openfisca_france_indirect_taxation.variables.taxes_indirectes import (
     ticpe,
     tva,
     )
-from openfisca_france_indirect_taxation.variables.consommation import (
+from openfisca_france_indirect_taxation.variables.consommation.energie import (
     emissions_co2, quantites_energie)
 
 
