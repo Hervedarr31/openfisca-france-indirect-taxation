@@ -37,6 +37,7 @@ def simulate_reformes_energie(graph = True):
         'pondmen',
         # revenu_reforme_officielle_2019_in_2017
         'total_taxes_energies',
+        'tva_energie',
         'tarifs_sociaux_electricite',
         'tarifs_sociaux_gaz',
         # + gains_tva_total_energies,
@@ -72,11 +73,11 @@ def simulate_reformes_energie(graph = True):
     # + gains_tva_total_energies + tarifs_sociaux_electricite + tarifs_sociaux_gaz
 
     df['revenu_reforme_officielle_2019_in_2017'] = (
-        df.total_taxes_energies
+        df.cheques_energie
         + df.tarifs_sociaux_electricite
         + df.tarifs_sociaux_gaz
-        + df.tva_total
-        # + gains_tva_total_energies
+        - df.total_taxes_energies
+        - df.tva_energie
         )
 
     df['cout_reforme_pures_taxes'] = (

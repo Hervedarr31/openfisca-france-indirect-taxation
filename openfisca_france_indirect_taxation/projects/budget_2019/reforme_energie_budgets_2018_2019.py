@@ -235,33 +235,33 @@ class officielle_2019_in_2017(Reform):
     #             tva_depenses_combustibles_liquides_officielle_2019_in_2017
     #             - tva_depenses_combustibles_liquides
     #             )
-    #         return gains_tva_combustibles_liquides
+    #         return gains_tva_combustibles_liquides0000
 
-    class gains_tva_gaz_ville_officielle_2019_in_2017(YearlyVariable):
-        value_type = float
-        entity = Menage
-        label = "Recettes de la réforme en TVA sur le gaz naturel"
+    # class gains_tva_gaz_ville_officielle_2019_in_2017(YearlyVariable):
+    #     value_type = float
+    #     entity = Menage
+    #     label = "Recettes de la réforme en TVA sur le gaz naturel"
 
-        def formula(menage, period, parameters):
-            taux_plein_tva = parameters(period.start).imposition_indirecte.tva.taux_de_tva.taux_normal
-            depenses_gaz_tarif_fixe = menage('depenses_gaz_tarif_fixe', period)
-            depenses_gaz_ville = \
-                menage('depenses_gaz_ville', period)
-            tva_depenses_gaz_ville_officielle_2019_in_2017 = (
-                (taux_plein_tva / (1 + taux_plein_tva))
-                * (depenses_gaz_ville_officielle_2019_in_2017 - depenses_gaz_tarif_fixe)
-                )
-            depenses_gaz_ville = \
-                menage('depenses_gaz_ville', period)
-            tva_depenses_gaz_ville = (
-                (taux_plein_tva / (1 + taux_plein_tva))
-                * (depenses_gaz_ville - depenses_gaz_tarif_fixe)
-                )
-            gains_tva_gaz_ville = (
-                tva_depenses_gaz_ville_officielle_2019_in_2017
-                - tva_depenses_gaz_ville
-                )
-            return gains_tva_gaz_ville
+    #     def formula(menage, period, parameters):
+    #         taux_plein_tva = parameters(period.start).imposition_indirecte.tva.taux_de_tva.taux_normal
+    #         depenses_gaz_tarif_fixe = menage('depenses_gaz_tarif_fixe', period)
+    #         depenses_gaz_ville = \
+    #             menage('depenses_gaz_ville', period)
+    #         tva_depenses_gaz_ville_officielle_2019_in_2017 = (
+    #             (taux_plein_tva / (1 + taux_plein_tva))
+    #             * (depenses_gaz_ville_officielle_2019_in_2017 - depenses_gaz_tarif_fixe)
+    #             )
+    #         depenses_gaz_ville = \
+    #             menage('depenses_gaz_ville', period)
+    #         tva_depenses_gaz_ville = (
+    #             (taux_plein_tva / (1 + taux_plein_tva))
+    #             * (depenses_gaz_ville - depenses_gaz_tarif_fixe)
+    #             )
+    #         gains_tva_gaz_ville = (
+    #             tva_depenses_gaz_ville_officielle_2019_in_2017
+    #             - tva_depenses_gaz_ville
+    #             )
+    #         return gains_tva_gaz_ville
 
     # class gains_tva_total_energies(YearlyVariable):
 
