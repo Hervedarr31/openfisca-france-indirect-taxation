@@ -110,8 +110,7 @@ def depenses_postes_agreges_function_creator(postes_coicop, categories_fiscales 
                 return sum(entity(
                     'poste_' + slugify(poste, separator = '_'), period_arg) for poste in postes_coicop
                     )
-            func.__name__ = "formula_{year_start}".format(
-                year_start = year_start, year_stop = year_stop)
+            func.__name__ = "formula_{year_start}".format(year_start = year_start)
             return func
 
         else:
@@ -161,14 +160,14 @@ def depenses_ht_categorie_function_creator(postes_coicop, year_start = None, yea
                 'depenses_ht_poste_' + slugify(poste, separator = '_'), period_arg) for poste in postes_coicop
                 )
 
-        func.__name__ = "formula_{year_start}".format(year_start = year_start, year_stop = year_stop)
+        func.__name__ = "formula_{year_start}".format(year_start = year_start)
         return func
 
     else:  # To deal with Reform emptying some fiscal categories
         def func(entity, period_arg):
             return 0
 
-    func.__name__ = "formula_{year_start}".format(year_start = year_start, year_stop = year_stop)
+    func.__name__ = "formula_{year_start}".format(year_start = year_start)
     return func
 
 
@@ -189,5 +188,5 @@ def depenses_ht_postes_function_creator(poste_coicop, categorie_fiscale = None, 
 
         return entity('poste_' + slugify(poste_coicop, separator = '_'), period_arg) / (1 + taux)
 
-    func.__name__ = "formula_{year_start}".format(year_start = year_start, year_stop = year_stop)
+    func.__name__ = "formula_{year_start}".format(year_start = year_start)
     return func

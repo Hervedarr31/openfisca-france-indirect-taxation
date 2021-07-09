@@ -34,12 +34,12 @@ log = logging.getLogger(__name__)
 
 
 @temporary_store_decorator(config_files_directory = config_files_directory, file_name = 'indirect_taxation_tmp')
-def run_all_steps(temporary_store = None, year_calage = 2011, year_data_list = [1995, 2000, 2005, 2011], skip_matching = False):
+def run_all_steps(temporary_store = None, year_calage = 2011, year_data_list = (1995, 2000, 2005, 2011), skip_matching = False):
 
     assert temporary_store is not None
 
     # Quelle base de données choisir pour le calage ?
-    year_data = find_nearest_inferior(year_data_list, year_calage)
+    year_data = find_nearest_inferior(list(year_data_list), year_calage)
 
     # 4 étape parallèles d'homogénéisation des données sources :
     # Gestion des dépenses de consommation:

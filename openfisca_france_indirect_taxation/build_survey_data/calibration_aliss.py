@@ -34,8 +34,7 @@ def build_clean_aliss_data_frame():
     aliss = survey.get_values(table = 'Base_ALISS_2011')
 
     assert (
-        aliss.columns.tolist()
-        == [
+        aliss.columns.tolist() == [
             'type', 'nomF', 'nomK', 'nomC', 'Qt_c', 'Dt_c', 'Qm_c', 'Dm_c', 'pm_c',
             'Tpoids', 'Qt_k', 'Dt_k', 'Qm_k', 'Dm_k', 'pm_k', 'Qt_f', 'Dt_f',
             'Qm_f', 'Dm_f', 'pm_f', 'nomCOICOP', 'SomTpoids', 'DT_k', 'D_a'
@@ -322,10 +321,10 @@ def compute_kantar_elasticities(compute = False):
         kantar_budget_share = pandas.read_csv(budget_share_path)
     else:
         kantar_budget_share = pandas.DataFrame()
-        for age, revenus, nomf in itertools.product(aliss.age.unique(), aliss.revenus.unique(), aliss.nomf.unique()):
+        for _age, _revenus, nomf in itertools.product(aliss.age.unique(), aliss.revenus.unique(), aliss.nomf.unique()):
 
             extract = aliss.query(
-                'nomf == @nomf & age == @age & revenus == @revenus'
+                'nomf == @nomf & age == @_age & revenus == @_revenus'
                 )[
                     ['age', 'revenus', 'nomk', 'dm_k', 'dm_f']
                 ]
