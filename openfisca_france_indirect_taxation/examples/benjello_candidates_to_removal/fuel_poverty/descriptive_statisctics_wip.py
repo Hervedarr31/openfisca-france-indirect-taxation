@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Dans ce script, on test la qualité de l'appariement.
 
 

@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 import statsmodels.formula.api as smf
 
 from openfisca_france_indirect_taxation.examples.utils_example import simulate_df_calee_by_grosposte

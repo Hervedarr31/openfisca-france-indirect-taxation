@@ -1,7 +1,4 @@
 #! /usr/bin/env python
-# -*- coding: utf-8 -*-
-
-
 import os
 
 from ipp_macro_series_parser.agregats_transports.poids_carburants.poids_carburants_cleaner import consommation, parc_auto

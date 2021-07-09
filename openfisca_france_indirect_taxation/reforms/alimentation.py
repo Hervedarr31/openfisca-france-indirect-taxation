@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 from openfisca_core.reforms import Reform
 
 from openfisca_france_indirect_taxation.variables.consommation.categories_fiscales import generate_variables

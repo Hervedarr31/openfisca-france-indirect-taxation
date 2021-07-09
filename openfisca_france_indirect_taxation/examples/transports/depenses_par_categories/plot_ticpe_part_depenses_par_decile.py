@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # L'objectif est d'exprimer pour chaque décile de revenu la part que représente les dépenses en TICPE sur l'ensemble
 # du revenu. Ce revenu prend trois définitions : le revenu total, le revenu disponible, ou l'ensemble des dépenses du
 # ménage. Ces calculs sont réalisés pour 2000, 2005 et 2011, et les parts spécifiques à l'essence et au diesel sont

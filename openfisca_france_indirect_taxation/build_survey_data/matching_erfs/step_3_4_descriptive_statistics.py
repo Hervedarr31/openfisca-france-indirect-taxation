@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 import os
 
 from openfisca_france_indirect_taxation.build_survey_data.matching_erfs.step_2_homogenize_variables import (

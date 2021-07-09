@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 import pandas
 from pandas import DataFrame
 import matplotlib.pyplot as plt

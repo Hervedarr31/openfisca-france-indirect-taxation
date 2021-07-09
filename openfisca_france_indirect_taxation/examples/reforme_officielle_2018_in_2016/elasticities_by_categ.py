@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 import pandas as pd
 
 from openfisca_france_indirect_taxation.examples.utils_example import (

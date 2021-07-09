@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # This script computes the share of households that financial lose from the reform,
 # after transfers. This share is given by category (in particular by income deciles).
 # Losses are computed on the basis of total financial gains and losses : a person

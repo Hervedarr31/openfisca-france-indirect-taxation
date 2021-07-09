@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 from pandas import concat
 
 from openfisca_france_indirect_taxation.examples.utils_example import simulate, df_weighted_average_grouped, \

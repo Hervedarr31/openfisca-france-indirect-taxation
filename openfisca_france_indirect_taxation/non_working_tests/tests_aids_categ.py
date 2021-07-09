@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # To do : change this test to fit with energy instead of categ
 
 import pandas as pd

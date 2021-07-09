@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 TICPE: Taxe intérieure sur la consommation des produits énergétiques
 """

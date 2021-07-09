@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """Création deux fichiers csv pour les deux bases de données homogènes BDF et ENL.
 Ils seront ensuite importées dans R pour l'appariement.
 On effectue au préalable les corrections nécessaires pour avoir des bases homogènes.

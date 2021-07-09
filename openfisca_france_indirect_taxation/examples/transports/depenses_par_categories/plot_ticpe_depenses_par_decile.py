@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Ce script a pour objectif de décrire pour chaque décile de revenu la consommation annuelle moyenne de carburants,
 # ainsi que les dépenses moyennes pour la TICPE
 

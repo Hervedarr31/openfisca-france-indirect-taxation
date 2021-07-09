@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # This script depicts households' financial gains/losses after the reform
 # and after redistribution. The gains are equal to the transfer received minus
 # the additional spending from the reform (not additional contributions).

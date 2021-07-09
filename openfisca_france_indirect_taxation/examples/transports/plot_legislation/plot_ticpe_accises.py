@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # L'objectif est de décrire l'évolution des montants des accises de la TICPE depuis 1993
 
 import seaborn

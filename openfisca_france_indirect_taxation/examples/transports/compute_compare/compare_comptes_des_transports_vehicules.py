@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # L'objectif de ce script est de décrire la différence entre la taille et la composition du parc tels que répertoriés
 # dans les données des Comptes du Transport, et celles des enquêtes Budget des Familles.
 

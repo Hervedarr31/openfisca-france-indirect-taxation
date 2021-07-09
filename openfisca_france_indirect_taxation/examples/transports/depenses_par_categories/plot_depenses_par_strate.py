@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # L'objectif est de calculer, pour chaque zone de résidence "strate", les dépenses moyennes en carburants.
 # L'analyse peut être affinée afin de comparer les dépenses en diesel et en essence.
 # On constate que pour les deux carburants les ménages ruraux consomment davantage que les urbains.

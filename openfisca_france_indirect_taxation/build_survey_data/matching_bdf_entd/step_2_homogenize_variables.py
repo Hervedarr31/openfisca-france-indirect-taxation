@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Dans ce script les variables qui ont des différences de définition sont reconstruites
 # sur le modèle de l'enquête BdF (ou entd dans certains cas où la nomenclature entd a plus de sens)
 # de manière à avoir des définitions identiques.

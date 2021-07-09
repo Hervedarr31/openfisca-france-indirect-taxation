@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def init_single_entity(scenario, autres = None, axes = None, conjoint = None, enfants = None,
         menage = None, period = None, personne_de_reference =None):
     if enfants is None:

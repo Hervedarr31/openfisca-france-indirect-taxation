@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # This script depicts households' net fiscal transfers from the reform.
 # It is equal to the transfers received from the reform, minus the additional
 # taxes paid. A positive value means the household received higher transfers than

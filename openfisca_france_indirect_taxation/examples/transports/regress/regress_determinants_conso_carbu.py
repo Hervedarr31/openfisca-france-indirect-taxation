@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # The aim of this module is to understand what determines the fuel consumption of households. We want to know what are
 # the determinant features, such as the effect of income or residence on fuel consumption. We could therefore try to
 # estimate price and income elasticities for fuel consumption on micro data. To avoid the endogeneity of our data,

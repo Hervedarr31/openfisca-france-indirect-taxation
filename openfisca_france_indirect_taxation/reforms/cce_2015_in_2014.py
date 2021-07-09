@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 import numpy
 
 from openfisca_core.reforms import Reform

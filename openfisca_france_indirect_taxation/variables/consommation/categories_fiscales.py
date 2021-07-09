@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 # from sortedcontainers.sorteddict import SortedDict
 import logging
 

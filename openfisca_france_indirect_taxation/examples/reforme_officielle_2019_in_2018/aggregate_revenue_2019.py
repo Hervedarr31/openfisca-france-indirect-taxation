@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # This script compares the revenue raised by various scenarios of reform.
 # This revenue only includes energy taxes and neglect the effect on VAT.
 

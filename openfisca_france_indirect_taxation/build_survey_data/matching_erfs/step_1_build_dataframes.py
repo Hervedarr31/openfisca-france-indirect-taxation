@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Dans ce script on importe les données des enquêtes BdF 2011 et ENL 2013.
 # Pour chacune des deux enquêtes on importe les variables qui seront
 # susceptibles d'êtres utilisées dans l'appariement des bases de données.

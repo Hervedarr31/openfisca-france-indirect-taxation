@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 Computing the Hellinger distance between two discrete
 probability distributions

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Dans ce script, on mesure, par décile de revenu, la part des ménages souffrant de précarité énergétique
 # On évalue la précarité énergétique selon plusieurs critères.
 

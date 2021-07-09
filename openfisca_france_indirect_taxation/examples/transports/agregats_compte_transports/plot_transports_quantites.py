@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Ce script réalise des graphiques à partir des données des comptes des transports, i.e. nos agrégats de référence
 # pour les transports : taille et composition du parc automobile, consommation des carburants, total des recettes
 # issues de la TICPE

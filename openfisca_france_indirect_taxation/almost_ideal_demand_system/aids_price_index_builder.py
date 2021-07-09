@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 import datetime as dt
 import os
 import pandas as pd

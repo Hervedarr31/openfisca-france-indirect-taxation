@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # OpenFisca -- A versatile microsimulation software
 # By: OpenFisca Team <contact@openfisca.fr>
 #

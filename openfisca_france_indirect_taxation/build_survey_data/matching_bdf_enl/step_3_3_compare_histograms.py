@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 # Dans ce script on utilise des histogrammes pour comparer la distribution des variables dans les deux enquêtes.
 # On peut ainsi juger si certaines d'entre elles doivent être ajustées de manière
 # à les harmoniser entre les deux enquêtes.

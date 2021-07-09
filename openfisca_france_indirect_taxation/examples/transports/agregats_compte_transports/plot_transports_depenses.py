@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Ce script réalise des graphiques à partir des données des comptes des transports, i.e. nos agrégats de référence
 # pour les transports : dépenses totales des ménages en carburants, et part de ces dépenses dans leur consommation
 

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # This script computes the percentage decrease in quantity of energy consumed by income deciles.
 # The objective is to capture the effort made in terms of privation due to the policy.
 # It gives another point of view than the financial effort.

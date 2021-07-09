@@ -1,7 +1,4 @@
 #! /usr/bin/env python
-# -*- coding: utf-8 -*-
-
-
 """France specific indirect taxation model for OpenFisca -- a versatile microsimulation free software"""
 
 

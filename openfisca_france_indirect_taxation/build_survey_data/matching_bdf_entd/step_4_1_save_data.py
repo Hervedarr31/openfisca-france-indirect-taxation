@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Dans ce script on crée deux fichiers .csv pour les deux bases de données
 # homogènes, qui seront ensuite importées dans R pour l'appariement. On effectue
 # au préalable les corrections nécessaires pour avoir des bases homogènes.

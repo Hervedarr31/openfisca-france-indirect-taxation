@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import pandas
 
 from openfisca_france_indirect_taxation.almost_ideal_demand_system.aids_dataframe_builder_energy import \

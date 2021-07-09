@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # This script computes the reduction in CO2 emissions from the reform.
 # The results are given per energy, and in total.
 

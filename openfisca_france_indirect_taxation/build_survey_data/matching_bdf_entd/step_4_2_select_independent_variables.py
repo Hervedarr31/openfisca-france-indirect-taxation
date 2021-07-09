@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 """
 In this script we run a stepwise regression for the prediction of the variables
 we want to match. The objective is to select the independent variables with

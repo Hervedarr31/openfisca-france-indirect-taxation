@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 from openfisca_france_indirect_taxation.examples.utils_example import graph_builder_bar, \
     save_dataframe_to_graph
 from openfisca_france_indirect_taxation.surveys import SurveyScenario

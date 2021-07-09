@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Import de modules spécifiques à Openfisca, et import des données de prix des carburants
 from ipp_macro_series_parser.agregats_transports.parser_cleaner_prix_carburants import prix_mensuel_carburants_90_15
 from openfisca_france_indirect_taxation.examples.utils_example import graph_builder_carburants

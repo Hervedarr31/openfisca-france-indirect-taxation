@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # In this script we estimate from the data ENL the probability for an household
 # to be cold according to several of his characteristics.
 # The aime will then be to compute the effect of the reform on the likelihood of being cold

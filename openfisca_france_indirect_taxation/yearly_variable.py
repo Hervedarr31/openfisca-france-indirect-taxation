@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 from openfisca_core.model_api import Variable
 from openfisca_core.periods import YEAR
 

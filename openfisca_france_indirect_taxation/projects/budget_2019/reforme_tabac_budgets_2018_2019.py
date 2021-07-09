@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from openfisca_core.reforms import Reform
 from openfisca_france_indirect_taxation.variables.base import *  # noqa analysis:ignore
 from openfisca_france_indirect_taxation.projects.base import elasticite_tabac

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # In this script we take the estimates obtained in the estimation with ENL,
 # and we compute the probabilities of being cold for BdF households.
 # We then replicate this with adjusted expenditures and do the difference.

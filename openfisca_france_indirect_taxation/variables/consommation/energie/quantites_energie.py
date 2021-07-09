@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 import numpy
 
 from openfisca_france_indirect_taxation.variables.base import *  # noqa analysis:ignore

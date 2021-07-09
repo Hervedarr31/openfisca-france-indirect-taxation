@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
     Create yaml files for prix_carburants
 """

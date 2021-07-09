@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 import statsmodels.formula.api as smf
 import numpy
 import pandas
