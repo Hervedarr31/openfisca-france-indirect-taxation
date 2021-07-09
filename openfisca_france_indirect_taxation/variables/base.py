@@ -63,8 +63,8 @@ def tax_from_expense_including_tax(expense = None, tax_rate = None):
 def insert_tva(categories_fiscales):
     categories_fiscales = categories_fiscales.copy()
     extracts = pd.DataFrame()
-    for categorie_primaire, tva in list(tva_by_categorie_primaire.items()):
-        extract = categories_fiscales.query('categorie_fiscale == @categorie_primaire').copy()
+    for _categorie_primaire, tva in list(tva_by_categorie_primaire.items()):
+        extract = categories_fiscales.query('categorie_fiscale == @_categorie_primaire').copy()
         extract['categorie_fiscale'] = tva
         extracts = pd.concat([extracts, extract], ignore_index=True)
 
