@@ -295,7 +295,7 @@ class quantites_gaz_contrat(YearlyVariable):
                 depenses_gaz_contrat == TypesContratGaz.b1,
                 depenses_gaz_contrat == TypesContratGaz.b2i,
                 ],
-             [
+            [
                 0,
                 tarif_fixe_gdf_ttc.base_0_1000,
                 tarif_fixe_gdf_ttc.b0_1000_6000,

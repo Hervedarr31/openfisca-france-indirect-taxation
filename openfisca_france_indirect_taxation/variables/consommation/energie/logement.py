@@ -439,5 +439,3 @@ class poste_gaz_ville(YearlyVariable):
         depenses_gaz_factures_jointes = menage('depenses_gaz_factures_jointes', period)
         depenses_gaz_ville = poste_gaz_seul + depenses_gaz_factures_jointes
         return depenses_gaz_ville
-
-
